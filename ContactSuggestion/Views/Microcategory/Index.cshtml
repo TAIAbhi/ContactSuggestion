@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ContactSuggestion.Models.MicroCategory>
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="detail-box">
+
+    @if (((ContactSuggestion.Models.MicroCategory)ViewBag.MicroCategory).MicroId > 0)
+    {
+        Html.RenderPartial("BindCategory", (ContactSuggestion.Models.ContactSuggestions)ViewBag.CategoryTab);
+    }
+    else
+    {
+        Html.RenderPartial("BindCategory", (ContactSuggestion.Models.ContactSuggestions)ViewBag.CategoryTab);
+    }
+   
+</div>
+<br />
+<br />
+<br />
+<br />
+<div class="detail-box">
+
+    @if (((ContactSuggestion.Models.MicroCategory)ViewBag.MicroCategory).MicroId > 0)
+    {
+        Html.RenderPartial("Edit", (ContactSuggestion.Models.MicroCategory)ViewBag.MicroCategory);
+    }
+    else
+    {
+        Html.RenderPartial("Create", (ContactSuggestion.Models.MicroCategory)ViewBag.MicroCategory);
+    }
+</div>
+@if (TempData["Success"] != null)
+            {
+    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+}
+<table class="table">
+    <tr>
+       
+        <th>
+            @Html.DisplayNameFor(model => model.SubCateName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+      
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.SubCateName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+       
+        <td>
+            @Html.ActionLink("Edit", "Edit", new {  id=item.MicroId }) 
+        </td>
+    </tr>
+}
+
+</table>
+<script type="text/javascript">
+    function ValidateData() {
+        if (document.getElementById('SubCateId').value == "0") {
+            alert("Please select suggestion.");
+            return false;
+        }
+        if (document.getElementById('Name').value == "") {
+            alert("Please select microcategory.");
+            return false;
+        }      
+    }
+   
+</script>

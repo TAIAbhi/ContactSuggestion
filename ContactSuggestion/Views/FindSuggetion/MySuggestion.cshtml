@@ -1,0 +1,352 @@
+﻿@model ContactSuggestion.Models.ContactSuggestions
+@{
+    ViewBag.Title = "MySuggestion";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+      
+            <div>
+                &nbsp;<label class="control-label">My Suggestion&nbsp;</label> <label id="Category" class="control-label"></label>
+            </div>
+            <div>
+                <div>
+                    @Html.HiddenFor(model => model.CatId)
+                    @Html.HiddenFor(model => model.SubCategoryId)
+                    @Html.HiddenFor(model => model.SourceId)
+                    @Html.HiddenFor(model => model.ContactId)
+                    @Html.HiddenFor(model => model.microcateId)
+                    @Html.HiddenFor(model => model.CitiLevelBusiness)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+
+
+                    <ul class="list-inline">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div style="padding-left:3px;padding-top:3px;float:left;">
+
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">
+                                        @category.Name.ToString()
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @foreach (var Subcategory in category.SubCategories)
+                                        {
+                                            <li>
+                                                <a class="dropdown" href="#" onclick="ShowLiUiLink(@Subcategory.CatId,@Subcategory.SubCatId,'@category.Name','@Subcategory.Name','@Subcategory.CommentsToolTip','@Subcategory.MicroCategoryToolTip')">
+                                                    @Subcategory.Name.ToString()
+                                                </a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </li>
+                            </div>
+                        }
+
+                    </ul>
+
+
+
+                </div>
+
+
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <span class="text-on-pannel text-primary">Filters</span>
+                    <p>
+                        @Html.EditorFor(model => model.BusinessName, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Name of the Business Entity (Individual or Company)" } })<br />
+                     <div style="float:left;">@Html.EditorFor(model => model.Location1, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Location (Mumbai Only)" } }) </div>
+                        <div>
+                            <label class="switch" style="vertical-align:bottom;">
+                                <input type="checkbox" id="CitiLevel" name="CitiLevel"  onclick="CheckLocal();">
+                                <span class="slider round"></span>
+                            </label>
+                        </div><br />
+                        <div id="divMicroCate" style="display:none;">
+                            @Html.EditorFor(model => model.Microcategory, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Subcategory/Details" } })
+                        </div>
+                        <br />                       
+                        <img src="~/Images/Filter.PNG" onclick="GetFilteredData()" /> 
+                    </p>
+                </div>
+            </div>
+
+
+
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            @*<input type="submit" value="Submit" class="btn btn-primary" onclick="return ValidateData();" />*@
+                            <input type="hidden" id="hdnInnerMicro" />
+                            <input type="hidden" id="hdnInnerSub" />
+                        </div>
+                    </div>
+                
+
+            </div>
+            <div id="test">
+
+            </div>
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+            <style>
+                .text-on-pannel {
+                    background: #fff none repeat scroll 0 0;
+                    height: auto;
+                    margin-left: 20px;
+                    padding: 3px 5px;
+                    position: absolute;
+                    margin-top: -47px;
+                    border: 1px solid #337ab7;
+                    border-radius: 8px;
+                }
+
+                .panel {
+                    /* for text on pannel */
+                    margin-top: 27px !important;
+                }
+
+                .panel-body {
+                    padding-top: 30px !important;
+                }
+            </style>
+            <style>
+                .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 40px;
+                    height: 25px;
+                }
+
+                    .switch input {
+                        display: none;
+                    }
+
+                .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    -webkit-transition: .4s;
+                    transition: .4s;
+                }
+
+                    .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 16px;
+                        width: 15px;
+                        left: 4px;
+                        bottom: 4px;
+                        background-color: white;
+                        -webkit-transition: .4s;
+                        transition: .4s;
+                    }
+
+                input:checked + .slider {
+                    background-color: #2196F3;
+                }
+
+                input:focus + .slider {
+                    box-shadow: 0 0 1px #2196F3;
+                }
+
+                input:checked + .slider:before {
+                    -webkit-transform: translateX(15px);
+                    -ms-transform: translateX(15px);
+                    transform: translateX(15px);
+                }
+
+                /* Rounded sliders */
+                .slider.round {
+                    border-radius: 34px;
+                }
+
+                    .slider.round:before {
+                        border-radius: 50%;
+                    }
+            </style>
+            <script type="text/javascript">
+
+                function GetFilteredData()
+                {
+                    if(document.getElementById('SubCategoryId').value=="0")
+                    {
+                        alert("Please select Hangouts/Services/Shopping and category from top section.");
+                        return false;
+                    }
+                    else
+                    {
+                        GetData('filter');
+                    }
+                }
+                function CheckLocal() {
+
+                    var value = document.getElementById('CitiLevelBusiness').value;
+                    if (value == "False") {
+                        document.getElementById('CitiLevelBusiness').value = "True";
+                    }
+                    else {
+                        document.getElementById('CitiLevelBusiness').value = "False";
+                    }
+                }
+                function ShowLiUiLink(catid, subcatId, cate, subcate, commentTool, microTool) {
+
+                    document.getElementById('CatId').value = catid;
+                    document.getElementById('SubCategoryId').value = subcatId;
+
+                    if (catid == 1) {
+                        document.getElementById('divMicroCate').style.display = "none";
+                        //  BindCategory(subcatId);
+
+                    }
+                    else {
+                        document.getElementById('divMicroCate').style.display = "inline";
+                       
+                    }
+                    GetData();
+
+                    // MicroCate
+                }
+                function GetValue(data) {
+
+
+                    debugger;
+                    document.getElementById('hdnInnerMicro').value = "$";
+                    document.getElementById('hdnInnerSub').value = "$";
+
+                    if (data.length > 0)
+                        document.getElementById('Category').innerHTML = data[0].Category;
+                    $('#test').empty();
+                    var tmpHTML = $('#test').html();
+                    for (var i = 0; i < data.length; i++) {
+                        var cityLevel = "Local";
+                        var microCat = "";
+                        if (data[i].Microcategory != null) {
+                            microCat = data[i].Microcategory;
+                            if (microCat.length > 0)
+                                microCat = "->" + microCat;
+                        }
+
+                        if (data[i].CitiLevelBusiness)
+                            cityLevel = "City Level";
+
+                        if (data[i].Microcategory != null && document.getElementById('hdnInnerMicro').value == microCat) {
+
+                            var innerMicro = $('#' + data[i].microcateId).html();
+                            innerMicro += "<br/>" + data[i].BusinessName + "<br/>" +
+                                            data[i].BusinessContact + "<br />" +
+                                         data[i].Location1 + "(" + cityLevel + ")<br/>" +
+
+                                          " Comments:" + data[i].Comments + "<br/>";
+
+                            document.getElementById(data[i].microcateId).innerHTML = innerMicro;
+
+
+                        }
+                        else if (data[i].Microcategory != null) {
+                            tmpHTML += "<div class=\"panel panel-primary\">" +
+                              " <div class=\"panel-body\">" +
+                                 " <span class=\"text-on-pannel text-primary\">" + data[i].SubCategory + microCat + "</span>" +
+                                  "<p id=\"" + data[i].microcateId + "\"> " + data[i].BusinessName + "<br/>" +
+                                          data[i].BusinessContact + "<br />" +
+                                           data[i].Location1 + "(" + cityLevel + ")<br/>" +
+
+                                          " Comments:" + data[i].Comments + "<br/></p>" +
+
+
+                              "</div>" +
+                          "</div>";
+                            $('#test').html(tmpHTML);
+                        }
+                        else if (document.getElementById('hdnInnerSub').value == data[i].SubCategory) {
+                            var innerP = $('#' + data[i].SubCategoryId).html();
+                            innerP += "<br/><br/><p>" + data[i].BusinessName + "<br/>" +
+                                            data[i].BusinessContact + "<br />" +
+                                         data[i].Location1 + "(" + cityLevel + ")<br/>" +
+
+                                          " Comments:" + data[i].Comments + "<br/></p>";
+                            $('#' + data[i].SubCategoryId).html(innerP);
+                        }
+                        else {
+                            tmpHTML += "<div class=\"panel panel-primary\">" +
+                           " <div class=\"panel-body\">" +
+                              " <span class=\"text-on-pannel text-primary\">" + data[i].SubCategory + microCat + "</span>" +
+                               "<p id=\"" + data[i].SubCategoryId + "\"> " + data[i].BusinessName + "<br/>" +
+                                       data[i].BusinessContact + "<br />" +
+                                      data[i].Location1 + "(" + cityLevel + ")<br/>" +
+
+                                       " Comments:" + data[i].Comments + "<br/></p>";
+                            "</div>" +
+                            "</div>";
+                            $('#test').html(tmpHTML);
+
+                        }
+
+                        document.getElementById('hdnInnerMicro').value = microCat;
+                        document.getElementById('hdnInnerSub').value = data[i].SubCategory
+                    }
+                }
+                function GetData(filter) {
+                 
+
+                    var catId;
+                    var SubCatId;
+                    var bussiness;
+                    var location;
+                    var isLocal;
+                    var microCat;
+                    var obj;
+                    if (filter == 'filter') {
+                        obj =
+                            {
+                                catId: $("#CatId").val(),
+                                SubCatId: $("#SubCategoryId").val(),
+                                bussiness: $("#BusinessName").val(),
+                                location: $("#Location1").val(),
+                                isLocal: document.getElementById('CitiLevelBusiness').value == "True" ? true : false,
+                                microCat: $("#microcateId").val()
+                            };
+                    }
+                    else
+                    {
+                        obj =
+                            {
+                                catId: $("#CatId").val(),
+                                SubCatId: $("#SubCategoryId").val()
+                            };
+                    }
+
+                    
+                    $.ajax({
+                        url: "/FindSuggetion/Suggestion",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        data: JSON.stringify(obj),
+                        success: function (data) {
+                            GetValue(data);
+
+                        },
+                    });
+                }
+            </script>
+            }
+

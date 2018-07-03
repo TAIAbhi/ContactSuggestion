@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ContactSuggestion.Models.RequestSuggetions>
+
+@{
+    ViewBag.Title = "Suggestion";
+    Layout = "~/Views/Shared/_Layout_RequestSuggestion.cshtml";
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.uID)
+        </th>
+       
+        <th>
+            @Html.DisplayNameFor(model => model.sourceName)
+        </th>    
+        <th>
+            @Html.DisplayNameFor(model => model.contactName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.locationName)
+        </th>       
+        <th>
+            @Html.DisplayNameFor(model => model.cityName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.categoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.subcategoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.microcategoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.comments)
+        </th>    
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.uID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sourceName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.contactName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.locationName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.cityName)
+        </td>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.categoryName)
+        </td>
+      
+        <td>
+            @Html.DisplayFor(modelItem => item.subcategoryName)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.microcategoryName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.comments)
+        </td>
+      
+        @*<td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>*@
+    </tr>
+}
+
+</table>

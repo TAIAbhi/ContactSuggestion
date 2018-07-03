@@ -1,0 +1,166 @@
+﻿@model ContactSuggestion.Models.Contacts
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    if (TempData["Success"] != null)
+    {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    }
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        @Html.HiddenFor(model => model.ContactSourceId)
+        <div class="panel panel-default">
+
+            <div>
+                &nbsp;<label class="control-label">Contact&nbsp;</label>
+            </div>
+            @if (Session["UserDetails"] != null)
+            {
+                ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
+                if (objSource.IsInterns)
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SoruceName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.SoruceName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SoruceName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContactName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ContactName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ContactName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContactNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ContactNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ContactNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>          
+            <div class="form-group">
+                @Html.LabelFor(model => model.Location1, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.EditorFor(model => model.Location1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Location1, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);" class="anchorDetail" style="text-decoration:underline;">Add Location</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Location2, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                    @Html.EditorFor(model => model.Location2, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Location2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Location3, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Location3, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Location3, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                    @Html.TextArea("Comments", (string)ViewBag.Comments, new { @class = "form-control text-box multi-line", @cols = 20, @rows = 3 })
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContactLevelUnderstating, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                    <div>
+                        @Html.RadioButtonFor(model => model.ContactLevelUnderstating, "1") 1
+                        @Html.RadioButtonFor(model => model.ContactLevelUnderstating, "2") 2
+                        @Html.RadioButtonFor(model => model.ContactLevelUnderstating, "3") 3
+                        @Html.RadioButtonFor(model => model.ContactLevelUnderstating, "4") 4
+                        @Html.RadioButtonFor(model => model.ContactLevelUnderstating, "5") 5
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Notification, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                    <div>
+                        @Html.RadioButtonFor(model => model.Notification, "1") 1
+                        @Html.RadioButtonFor(model => model.Notification, "2") 2
+                        @Html.RadioButtonFor(model => model.Notification, "3") 3
+                        @Html.RadioButtonFor(model => model.Notification, "4") 4
+                        @Html.RadioButtonFor(model => model.Notification, "5") 5
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Submit" class="btn btn-primary" onclick="return ValidateContact()" />
+                </div>
+            </div>
+
+        </div>
+        <div id='myModal' class='modal'>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id='myModalContent'></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        function  ValidateContact()
+        {
+
+            if (document.getElementById('ContactSourceId').value == "0") {
+                alert("Please select source.");
+                return false;
+            }
+            if (document.getElementById('ContactName').value == "") {
+                alert("Please select Contact Name.");
+                return false;
+            }
+            if (document.getElementById('ContactNumber').value == "") {
+                alert("Please select Contact Number.");
+                return false;
+            }
+        }
+    </script>
+
+}
+
+
+

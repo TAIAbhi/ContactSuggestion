@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+  
+    <title>TagAboutIt!</title>
+   
+    <meta name="viewport" content="width=550, initial-scale=1">
+
+    <link rel="stylesheet" href="demo.css">
+    <link rel="stylesheet" href="../dist/jquery.flipster.min.css">
+<style>
+    button{
+        border: none;
+        background-color: transparent;
+    }
+</style>
+    <script src="jquery.min.js"></script>
+    <script src="../dist/jquery.flipster.min.js"></script>
+</head>
+<body>
+
+  
+
+
+        <div class="headerlogo">
+                <img src="imG/logoT.png" alt="logo" />
+                
+              </div>
+        
+
+   
+
+<article id="demo-default">
+
+    <button class="button">Login</button>
+
+    <div id="coverflow" class="maindiv">
+        <ul class="flip-items">
+
+            <li data-flip-title="Razzmatazz" data-flip-category="Purples">
+                <button id="myBtn">
+                <img src="img/Concept.png">
+            </li>
+
+            <li data-flip-title="Red">
+                <button id="myBtn1">
+                <img src="img/About_US.png"></a>
+            </li>
+            
+            <li data-flip-title="Cerulean Blue" data-flip-category="Blues">
+                <button id="myBtn2" onclick="tryit90()">
+                <img src="img/TAG.png"></a>
+            </li>
+           
+            <li data-flip-title="Daisy Bush" data-flip-category="Purples">
+                <button id="myBtn3">
+                <img src="img/The_Team.png"></a>
+            </li>
+
+            <li data-flip-title="Deep Lilac" data-flip-category="Purples">
+                <button id="myBtn4">
+                <img src="img/Contact_US.png"></a>
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Trigger/Open The Modal -->
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+<img id="img1">
+  <!-- Modal content -->
+  <div id="divtxt" class="modal-content">
+    
+    <!--<span class="close">&times;</span>-->
+
+  </div>
+
+</div>
+
+<ul class="socialicon">
+        <li><a href="https://facebook.com/" target="_blank"><img src="img/facebook.png" width="30px" height="30px"></a>
+        <li><a href="https://twitter.com/" target="_blank"><img src="img/twitter.png" width="30px" height="30px"></a>
+        <li><a href="https://instagram.com/" target="_blank"><img src="img/instagram.png" width="30px" height="30px"></a>
+        <li><a href="https://linkedin.com/" target="_blank"><img src="img/linkedin.png" width="30px" height="30px"></a>
+  </ul>
+
+<img id="chck">
+<script>
+
+    function tryit90(){
+        document.getElementById("img1").src="img/TAG_2.png"
+    }
+    function tryit(){
+
+        document.getElementById("divtxt").innerHTML="Word of mouth is the best medium of all - William Bernbach.<br>There are no boundaries or borders in the digital age - Karim Rashid.<br>We're bringing these 2 together for you...<br>So that you can #TagAboutIt!";
+                    
+    }
+    function tryit1(){
+       
+        document.getElementById("divtxt").innerHTML="Welcome to Tag About It!<br>Hello!Tag About It, help curate the personal requirements you need with the help of the people you trust.<br>We craft bespoke personal communities for our members and their friends featuring Services, Hangouts and Shopping through recommendations and reviews.<br>Tag about It,is a mobile application that allows you to find need-based solutions for your requirements by reviews and recommendation made by your family and friends, easing the problems you face in finding the right options you need";
+    }
+    function tryit2(){
+        document.getElementById("divtxt").innerHTML="Abhijit Saste (Founder & CEO)<br>The conceptualization of “Tag about it” is his brainchild and he has left no stone unturned to bring it to life.<br>Srikant Kasa(Branding, Marketing & Public Relations)<br>With his flair for people he has been instrumental in increasing the awareness about the App amongst people.<br>Aditya Gharat(Process, Operations & Administration)<br>His expertise in Process Building and People Management has been quite helpful during the formation of Tag About it!";
+	
+        /*document.getElementById("check").style.marginLeft="18%";*/
+    }
+    function tryit3(){
+        document.getElementById("divtxt").innerHTML="<b>ADDRESS:</b>1, Floor-1, 61, Vijaya Bhavan, Ranada Road, Near Shushrusha Hospital, Dadar (West), Mumbai-400 028. <br> <b>EMAIL:</b> abhi.saste@hotmail.com / abhi.saste@gmail.com<br> <b>CONTACT:</b> 9867587106<br>";
+    }
+    function tryit4(){
+        document.getElementById("divtxt").src="img/TAG_2.png";
+    }
+   
+    </script>
+
+<div class="socialline" >
+        <a href="">Request Invite To Join the Community Click Here</a>
+</div>
+
+
+<script>
+    var coverflow = $("#coverflow").flipster();
+</script>
+
+
+<script>
+    // Get the modal
+    var modal = document.getElementById('myModal');
+    
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+    var btn1 = document.getElementById("myBtn1");
+    var btn2 = document.getElementById("myBtn2");
+    var btn3 = document.getElementById("myBtn3");
+    var btn4 = document.getElementById("myBtn4");
+
+
+
+
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+        tryit();
+        modal.style.display = "block";
+    }
+    btn1.onclick = function() {
+        tryit1();
+        modal.style.display = "block";
+    }
+    btn2.onclick = function() {
+        tryit4();
+        modal.style.display = "none";
+    }
+    btn3.onclick = function() {
+        tryit2();
+        modal.style.display = "block";
+    }
+    btn4.onclick = function() {
+        tryit3();
+        modal.style.display = "block";
+    }
+</script>
+</body>
+</html>

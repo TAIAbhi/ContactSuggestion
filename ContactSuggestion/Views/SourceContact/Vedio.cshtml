@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "Vedio";
+}
+
+<h2>
+
+</h2>
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="View" class="btn btn-primary" onclick="return UpdateSkip('View');" />
+        <input type="submit" value="Skip" class="btn btn-primary" onclick="return UpdateSkip('Skip');" />
+    </div>
+</div>
+<script type="text/javascript">
+    function UpdateSkip(from) {
+        var skip = true;
+        if (from == 'View') {
+            skip = false;
+        }
+    
+        $.ajax({
+            url: "/Login/SkipVedio",
+            type: "POST",
+
+            data: JSON.stringify({
+                'skip': skip
+            }),
+
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data.Message != "") {
+                    alert(data.Message);
+                }
+                if (data.isRedirect) {
+
+                    window.location.href = data.redirectUrl;
+
+                }
+
+            },
+        })
+    }
+</script>
+
+

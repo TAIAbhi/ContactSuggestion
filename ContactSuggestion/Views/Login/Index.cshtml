@@ -1,0 +1,126 @@
+﻿@model ContactSuggestion.Models.Source
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="loginForm">
+            @using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <h4>Please login here.</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Mobile, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Mobile, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <input type="button" onclick="GetData()" value="Log in" id="myBtn" class="btn btn-primary"  />
+                    </div>
+                </div>
+
+            }
+        </section>
+    </div>
+
+</div>
+
+<script type="text/javascript">    
+
+    document.getElementById('myBtn').focus();
+
+    document.getElementById("Mobile")
+    .addEventListener("keyup", function (event) {
+        event.preventDefault();
+        if (event.keyCode === 13)
+        {
+            document.getElementById("myBtn").click();
+        }
+    });
+    document.getElementById("Password")
+    .addEventListener("keyup", function (event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("myBtn").click();
+        }
+    });
+   
+</script>
+
+<script type="text/javascript">
+
+   
+
+    function GetData() {
+
+        var isValid = true;
+        if (document.getElementById('Mobile').value == "")
+        {
+            alert("Please enter mobile number.");
+            document.getElementById('Mobile').focus();
+            isValid = false;
+            return false;
+           
+        }
+      
+        if (document.getElementById('Password').value == "") {
+            alert("Please enter password.");
+            document.getElementById('Password').focus();
+            isValid = false;
+            return false;
+
+        }
+        if (isValid) {
+
+            $.ajax({
+                url: "/Login/loginSubmit",
+                type: "POST",
+
+                data: JSON.stringify({
+                    'userID': document.getElementById('Mobile').value,
+                    'password': document.getElementById('Password').value
+                }),
+
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.Message != "") {
+                        alert(data.Message);
+                    }
+                    if (data.isRedirect) {
+
+                        window.location.href = data.redirectUrl;
+
+                    }
+
+                },
+            })
+        }
+        }
+
+
+
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

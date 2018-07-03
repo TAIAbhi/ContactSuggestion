@@ -1,0 +1,89 @@
+﻿@model ContactSuggestion.Models.ContactSuggestions
+@{
+    ViewBag.Title = "BindCategory";
+}
+
+<div class="form-group">
+    <div class="col-md-10">
+
+        <div>
+            <label id="Category" class="control-label" >
+                @ViewBag.Category
+            </label>
+            <label id="SubCategory" class="control-label">@ViewBag.SubCategory</label>
+        </div>
+        <div>
+            <div>
+                @Html.HiddenFor(model => model.CatId)
+                @Html.HiddenFor(model => model.SubCategoryId)
+                @Html.HiddenFor(model => model.SourceId)
+                @Html.HiddenFor(model => model.ContactId)
+            </div>
+        </div>
+        <ul class="list-inline">
+            @foreach (var category in Model.Categories)
+            {
+                if (category.CatId != 1)
+                {
+                <div style="padding-left:3px;padding-top:3px;float:left;">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">
+                            @category.Name.ToString()
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            @foreach (var Subcategory in category.SubCategories)
+                            {
+                                <li>
+                                    <a class="dropdown" href="#" onclick="ShowLiUiLink(@Subcategory.CatId,@Subcategory.SubCatId,'@category.Name','@Subcategory.Name','@Subcategory.CommentsToolTip','@Subcategory.MicroCategoryToolTip')">
+                                        @Subcategory.Name.ToString()
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </li>
+                </div>
+                }
+            }
+
+        </ul>
+
+
+
+    </div>
+
+    <script type="text/javascript">
+        function ShowLiUiLink(catid, subcatId, cate, subcate, commentTool, microTool) {
+
+            document.getElementById('CatId').value = catid;
+            document.getElementById('SubCateId').value = subcatId;
+            document.getElementById('SubCategory').innerHTML = subcate;
+            document.getElementById('Category').innerHTML = cate + "->";
+          
+            var obj;
+            obj =
+                {                  
+                    subCatId:subcatId,
+                    category:cate,
+                    subcategory:subcate
+                };
+            $.ajax({
+                url: '@Url.Action("ReloadIndex", "Microcategory")',
+                data: obj,
+                dataType: "json",
+                type: 'POST',
+                success: function() {   
+                    window.location.href = '/Microcategory/Index?subCatId=' + subcatId;
+                }
+            });
+
+
+            // MicroCate
+        }
+    </script>
+</div>
+
+
+

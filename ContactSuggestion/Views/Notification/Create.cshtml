@@ -1,0 +1,241 @@
+﻿@model ContactSuggestion.Models.RequestNotificationViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout_Notification.cshtml";
+}
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    if (TempData["Success"] != null)
+    {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    }
+
+    <div class="form-horizontal">
+       
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+       
+        <div>
+            <div>
+                @Html.HiddenFor(model => model.CatId)
+                @Html.HiddenFor(model => model.SubCategoryId)              
+                @Html.HiddenFor(model => model.ContactId)              
+                @Html.HiddenFor(model => model.MicrocategoryId)
+                @Html.HiddenFor(model => model.LocationId)
+                @Html.HiddenFor(model => model.Notify)
+                @Html.HiddenFor(model => model.ProvdReqdsuggData)
+                
+                
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Contact, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Contact, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Contact, "", new { @class = "text-danger" })
+            </div>
+        </div>  
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NotificationTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NotificationTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>  
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NotificationPhoto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NotificationPhoto, "", new { @class = "text-danger" })
+            </div>
+        </div> 
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotificationType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+
+                <div>
+                    @Html.RadioButtonFor(model => model.NotificationType, "Default", new { onchange = "RadioChange('Default')" }) Default
+                    @Html.RadioButtonFor(model => model.NotificationType, "Ranking", new { onchange = "RadioChange('Ranking')" }) Ranking
+                    @Html.RadioButtonFor(model => model.NotificationType, "Reqdsuggprovd", new { onchange = "RadioChange('Reqdsuggprovd')" }) Reqdsuggprovd
+                    @Html.RadioButtonFor(model => model.NotificationType, "ReqAddSug", new { onchange = "RadioChange('ReqAddSug')" }) ReqAddSug  
+                    @Html.RadioButtonFor(model => model.NotificationType, "ProvdReqdsugg", new { onchange = "RadioChange('ProvdReqdsugg')" }) ProvdReqdsugg  
+                    @Html.RadioButtonFor(model => model.NotificationType, "MyDetails", new { onchange = "RadioChange('MyDetails')" }) MyDetails                                                          
+                </div>
+            </div>
+        </div>        
+        <div class="form-group" style="display:none;" id="divRedirectTo">
+            @Html.LabelFor(model => model.RedirectTo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RedirectTo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.RedirectTo, "", new { @class = "text-danger" })
+            </div>
+        </div> 
+        <div class="form-group" style="display:none;" id="divAddOrView">
+            @Html.LabelFor(model => model.AddOrView, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div>
+                @Html.RadioButtonFor(model => model.AddOrView, "AddSugg", new { onchange = "RadioChangeViewSugg('AddSugg')" }) AddSugg
+                @Html.RadioButtonFor(model => model.AddOrView, "ViewSugg ", new { onchange = "RadioChangeViewSugg('ViewSugg')" }) ViewSugg 
+            </div>
+        </div> 
+        <div class="form-group">   
+          
+            <div class="col-md-10">
+
+
+                <ul class="list-inline">
+                    @foreach (var category in Model.Categories)
+                    {
+                        <div style="padding-left:3px;padding-top:3px;float:left;">
+
+                            <li class="dropdown">
+                                <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">
+                                    @category.Name.ToString()
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    @foreach (var Subcategory in category.SubCategories)
+                                    {
+                                        <li>
+                                            <a class="dropdown" href="#" onclick="ShowLiUiLink(@Subcategory.CatId,@Subcategory.SubCatId,'@category.Name','@Subcategory.Name','@Subcategory.CommentsToolTip','@Subcategory.MicroCategoryToolTip')">
+                                                @Subcategory.Name.ToString()
+                                            </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </li>
+                        </div>
+                    }
+
+                </ul>
+
+
+
+
+            </div>
+
+        </div>
+        <div>
+            &nbsp; <label id="Category" class="control-label"></label>
+            <label id="SubCategory" class="control-label"></label>
+        </div>
+        <div class="form-group" id="MicroCate" style="display:none;">
+            @Html.LabelFor(model => model.Microcategory, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Microcategory, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Microcategory, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CityId", null, new { style = "width: 150px;" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.LocationName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LocationName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LocationName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Text, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Text, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Send Notification" class="btn btn-primary" onclick="return ValidateData();" />
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function RadioChange(text)
+        {
+            document.getElementById('Notify').value = text;
+            if( text =="Default")
+            {
+                document.getElementById('divRedirectTo').style.display = "inline"; 
+            }
+            else
+            {
+                document.getElementById('divRedirectTo').style.display = "none"; 
+            }
+            if( text =="ProvdReqdsugg")
+            {
+                document.getElementById('divAddOrView').style.display = "inline"; 
+            }
+            else
+            {
+                document.getElementById('divAddOrView').style.display = "none"; 
+            }
+            
+        }
+        function RadioChangeViewSugg(text)
+        {
+            document.getElementById('ProvdReqdsuggData').value = text;
+        }
+        function ShowLiUiLink(catid, subcatId, cate, subcate, commentTool, microTool) {
+            document.getElementById('Microcategory').value = "";
+            document.getElementById('CatId').value = catid;
+            document.getElementById('SubCategoryId').value = subcatId;
+            document.getElementById('SubCategory').innerHTML = subcate;
+            document.getElementById('Category').innerHTML = cate + "->";
+          
+            if (catid == 1) {
+                document.getElementById('MicroCate').style.display = "none";             
+            }
+            else {
+                document.getElementById('MicroCate').style.display = "block";              
+            }
+
+            // MicroCate
+        }
+        function ValidateData() {       
+            if (document.getElementById('ContactId').value == "0")
+            {
+                alert("Please select contact.");
+                return false;
+            }
+            if (document.getElementById('NotificationTitle').value == "")
+            {
+                alert("Please select Notification Title.");
+                return false;
+            }
+            if (document.getElementById('Notify').value == "")
+            {
+                alert("Please select Notification Type.");
+                return false;
+            }
+
+            if (document.getElementById('Notify').value == "Reqdsuggprovd" ||document.getElementById('Notify').value == "ReqAddSug") 
+            {
+                if (document.getElementById('CatId').value == "")
+                {
+                    alert("Please select Hangouts/Services/Shopping and category from section.");
+                    return false;
+                }
+            }  
+            if (document.getElementById('Notify').value == "Reqdsuggprovd" ||document.getElementById('Notify').value == "ReqAddSug") 
+            {
+                if (document.getElementById('CatId').value != "1") {
+                    if (document.getElementById('MicrocategoryId').value == "")
+                    {
+                        alert("Please select sub category.");
+                        return false;
+                    }
+                }  
+            }
+           
+        }
+    </script>
+}
+

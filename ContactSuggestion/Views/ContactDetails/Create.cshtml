@@ -1,0 +1,422 @@
+﻿@model ContactSuggestion.Models.ContactSuggestions
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    if(TempData["Success"] != null)
+    {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    }
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+      
+        <div >
+            <div>&nbsp; <label id="Category" class="control-label"></label>
+<label id="SubCategory" class="control-label"></label></div>
+            <div>
+                <div>                  
+                    @Html.HiddenFor(model => model.CatId)
+                    @Html.HiddenFor(model => model.SubCategoryId)
+                    @Html.HiddenFor(model => model.locationId)
+                    @Html.HiddenFor(model => model.SourceId)
+                    @Html.HiddenFor(model => model.ContactId)
+                    @Html.HiddenFor(model => model.CitiLevelBusiness)
+                    @Html.HiddenFor(model => model.Microcategory)
+                    @Html.HiddenFor(model => model.IsAChain)
+                 
+                </div>
+            </div>
+            <div class="form-group">              
+                <div class="col-md-10">
+
+
+                    <ul class="list-inline">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div style="padding-left:3px;padding-top:3px;float:left;">
+                               
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">
+                                       @category.Name.ToString()
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @foreach (var Subcategory in category.SubCategories)
+                                        {
+                                            <li><a class="dropdown"  href="#" onclick="ShowLiUiLink(@Subcategory.CatId,@Subcategory.SubCatId,'@category.Name','@Subcategory.Name','@Subcategory.CommentsToolTip','@Subcategory.MicroCategoryToolTip')">
+                                                @Subcategory.Name.ToString()                                               
+                                            </a></li>
+                                        }                                      
+                                       
+                                    </ul>
+                                </li>
+                            </div>
+                        }
+
+                    </ul>
+                 
+
+                  
+
+                </div>
+               
+              
+            </div>
+
+         
+           
+
+           
+            <div class="form-group">
+               
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.BusinessName, new { htmlAttributes = new { @class = "form-control" , @Placeholder = "Name of the Business Entity (Individual or Company)" } })
+                    @Html.ValidationMessageFor(model => model.BusinessName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+             
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.EditorFor(model => model.Location1, new { htmlAttributes = new { @class = "form-control" , @Placeholder = "Location (Mumbai Only)" } })
+                                @Html.ValidationMessageFor(model => model.Location1, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);" class="anchorDetail" style="text-decoration:underline;">Add Location</a>     
+                            </td>
+                        </tr>
+                    </table>
+                 
+                </div>
+            </div>
+
+           
+            <div class="form-group">
+              
+                <div class="col-md-10">
+                  <table>
+                      <tr>
+                          <td>
+                              @Html.EditorFor(model => model.BusinessContact, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Contact Number(not mandatory)" } })
+                              @Html.ValidationMessageFor(model => model.BusinessContact, "", new { @class = "text-danger" })
+                          </td>
+                          <td>
+                              @Html.LabelFor(model => model.CitiLevelBusiness)
+                          </td>
+                          <td style="vertical-align:bottom;">
+                              <label class="switch" style="vertical-align:bottom;">
+                                  <input type="checkbox" id="CitiLevel" name="CitiLevel"   onclick="CheckLocal();">
+                                  <span class="slider round"></span>
+                              </label>
+                          </td>
+                         
+                      </tr>
+                  </table>
+                  
+                </div>
+            </div>
+          
+          
+           
+        
+
+            @*<div class="form-group">
+                @Html.LabelFor(model => model.Location2, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Location2, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Location2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Location3, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Location3, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Location3, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+            <div class="form-group" id="MicroCate" style="display:none;">              
+                          
+                                            
+             
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                            <td>
+                               
+                                <select id="mydrop" name="mydrop" class="form-control" style="display:none;" onchange="SetValue()"></select>
+                            </td>                                         
+                            @*<td>  
+                                @Html.EditorFor(model => model.Details, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Details" } })
+                            </td>*@
+                          
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.EditorFor(model => model.Details, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Subcategory/Details" } })
+                                @Html.ValidationMessageFor(model => model.Details, "", new { @class = "text-danger" })
+                            </td>     
+                        </tr>
+                    </table>                
+                     
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(model => model.IsAChain, htmlAttributes: new { @class = "control-label" })
+                            </td>
+                            <td style="vertical-align:bottom;">
+                                <label class="switch" style="vertical-align:bottom;">
+                                    <input type="checkbox" id="chIsAChain" name="chIsAChain" onclick="CheckIsAChain();">
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </div>
+            </div>
+            <div class="form-group">         
+                       
+               
+                       
+             
+                <div class="col-md-10">
+                   
+                    @Html.TextArea("Comments", (string)ViewBag.Comments, new { @class = "form-control text-box multi-line", @cols = 20, @rows = 5, @Placeholder = "Reason for suggestion" })
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })            
+                  
+                </div>
+            </div>           
+          
+            <div class="form-group">
+
+                <div class="col-md-10">
+                    <input type="submit" value="Add Suggestion" class="btn btn-primary" onclick="return ValidateData();" />
+                </div>
+            </div>
+
+        </div>
+        <div id='myModal' class='modal'>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id='myModalContent'></div>
+                </div>
+            </div>
+
+        </div> 
+       
+       
+    </div>
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 25px;
+        }
+
+            .switch input {
+                display: none;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 15px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                -webkit-transition: .4s;
+                transition: .4s;
+            }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(15px);
+            -ms-transform: translateX(15px);
+            transform: translateX(15px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+            .slider.round:before {
+                border-radius: 50%;
+            }
+    </style>
+
+    <script type="text/javascript">
+       
+        function ShowLiUiLink( catid, subcatId, cate,  subcate, commentTool, microTool)
+        {
+            document.getElementById('Microcategory').value = "";
+            document.getElementById('CatId').value=catid;
+            document.getElementById('SubCategoryId').value = subcatId;
+            document.getElementById('SubCategory').innerHTML = subcate;
+            document.getElementById('Category').innerHTML = cate +"->";          
+            
+         
+            document.getElementById('mydrop').style.display = "none";
+            document.getElementById('Details').value ="";
+            document.getElementById('mydrop').value ="";
+            if (catid == 1) {
+                document.getElementById('MicroCate').style.display = "none";
+              //  BindCategory(subcatId);
+              
+            }
+            else
+            {
+                document.getElementById('MicroCate').style.display = "block";
+                BindCategory(subcatId,microTool);
+            }
+
+           // MicroCate
+        }
+        function SelectMicroCategory(item)
+        {
+                   
+            
+            document.getElementById('Details').value = $.trim(item.split('~')[1]);
+            document.getElementById('mydrop').value = $.trim(item.split('~')[0]);
+           
+        }
+        function SetValue()
+        {            
+            //document.getElementById('Details').value="";
+            document.getElementById('mydrop').style.backgroundColor="";
+        }
+        function BindCategory(subcatId,microTool)
+        {
+            document.getElementById('Details').placeholder=microTool;
+            var SubCatId;
+            var obj;
+            obj =
+                {                  
+                    subCatId:subcatId
+                };
+
+            $.ajax({
+                url: "/ContactDetails/BindDropdown",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: JSON.stringify(obj),
+                success: function (data)
+                {
+                    LoadDDLField(data);                  
+                },
+            });
+        }
+      
+        function LoadDDLField(data) {           
+            $("mydrop").empty();
+            var items = "<option selected></option>";
+            for (var i = 0; i < data.length; i++) {
+                items += '<option value=' + JSON.stringify($.trim(data[i].label)) + '>' +  $.trim(data[i].label) + '</option > '              
+            }
+            $("#mydrop").html(items);
+        }
+        function ValidateData()
+        {
+           
+            if(document.getElementById('CatId').value=="0")
+            {
+                alert("Please select Hangouts/Services/Shopping and category from top section.");
+                return false;
+            }
+            if (document.getElementById('BusinessName').value == "") {
+                alert("Please select Business Name.");
+                return false;
+            }
+            if(document.getElementById('CatId').value!="1")
+            {
+            if (document.getElementById('mydrop').value == "") {
+                alert("Please select sub category.");
+                return false;
+            }
+           
+           }
+            
+            if (document.getElementById('CitiLevelBusiness').value == "False")
+            {
+                if (document.getElementById('locationId').value == "0")
+                {
+                    alert("Please select location.");
+                    return false;
+                }
+            }
+            if (document.getElementById('Location1').value != "")
+            {
+                if (document.getElementById('locationId').value == "0") {
+                    alert("Please select location.");
+                    return false;
+                }
+            }
+        }
+        function CheckLocal()
+        {
+            
+            var value = document.getElementById('CitiLevelBusiness').value;
+            if(value=="False")
+            {
+                document.getElementById('CitiLevelBusiness').value = "True";
+            }
+            else
+            {
+                document.getElementById('CitiLevelBusiness').value = "False";
+            }
+        }
+
+        function CheckIsAChain() {
+           
+            var value = document.getElementById('IsAChain').value;
+            if (value == "False") {
+                document.getElementById('IsAChain').value = "True";
+            }
+            else {
+                document.getElementById('IsAChain').value = "False";
+            }
+        }
+        
+    </script>
+}
+

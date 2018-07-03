@@ -1,0 +1,27 @@
+﻿
+@if (Session["UserDetails"] != null)
+{
+    ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
+    using (Html.BeginForm("LogOff", "ContactDetails", FormMethod.Post, new { @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+
+                @Html.ActionLink("Hello " + objSource.ContactName + "!", "LogOff", "ContactDetails", new { area = "" })
+            </li>
+            <li>
+                @Html.ActionLink("Log off", "LogOff", "ContactDetails", new { area = "" })
+
+            </li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        @*<li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>*@
+    </ul>
+}

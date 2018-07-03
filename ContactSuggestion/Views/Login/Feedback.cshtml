@@ -1,0 +1,329 @@
+﻿@model ContactSuggestion.Models.Feedbacks
+
+@{
+    Layout = "~/Views/Shared/_Layout_Feedback.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+    if (TempData["Success"] != null)
+    {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    }
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.MobileNumber)
+        @Html.HiddenFor(model => model.Rating1)
+        @Html.HiddenFor(model => model.Rating2)
+        @Html.HiddenFor(model => model.Rating3)
+        @Html.HiddenFor(model => model.Rating4)
+        @Html.HiddenFor(model => model.Rating5)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Aspect1, htmlAttributes: new { @class = "control-label col-md-2" ,@style= "font-family:Calibri;font-style:normal;font-weight:normal;" })
+            <div class="col-md-10" style="padding-top:6px;">
+                <div style="padding-left:10px;">
+                    @Html.DropDownList("Aspect1", null, "Choose", new { style = "width: 150px;font-family:Calibri;font-style:normal;background-color:#f1f1f1;" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+          
+            <div class="col-md-10">
+
+                <div>
+                    <label style= "font-family:Calibri;font-style:normal;font-weight:normal;padding-left:10px;">
+                        Rating
+                    </label>
+                    <label style="width:5px;">
+
+                    </label>
+                        <label>
+                            <img src="../Images/S1OFF.png" alt="..." onclick="changeimg1('img1', 'img2', 'img3', 'img4', 'img5', 'Rating1')" id="img1" style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S2OFF.png" alt="..." onclick="changeimg2('img1', 'img2', 'img3', 'img4', 'img5', 'Rating1')" id="img2" style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S3OFF.png" alt="..." onclick="changeimg3('img1', 'img2', 'img3', 'img4', 'img5', 'Rating1')" id="img3" style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S4OFF.png" alt="..." onclick="changeimg4('img1', 'img2', 'img3', 'img4', 'img5', 'Rating1')" id="img4" style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S5OFF.png" alt="..." onclick="changeimg5('img1', 'img2', 'img3', 'img4', 'img5', 'Rating1')" id="img5" style="max-width:25px;">
+                        </label>
+
+
+</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+         
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments1, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments" ,@style= "background-color:#f1f1f1;"} })
+                @Html.ValidationMessageFor(model => model.Comments1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(model => model.Aspect2, htmlAttributes: new { @class = "control-label col-md-2" , @style = "font-family:Calibri;font-style:normal;font-weight:normal;" })
+            <div class="col-md-10" style="padding-top:6px;">
+                <div style="padding-left:10px;">
+                    @Html.DropDownList("Aspect2", null, "Choose", new { style = "width: 150px;font-family:Calibri;font-style:normal;background-color:#f1f1f1;" })
+                </div>
+                </div>
+        </div>
+        <div class="form-group">
+         
+            <div class="col-md-10">
+
+                <div>
+                    <div>
+                        <label style="font-family:Calibri;font-style:normal;font-weight:normal;padding-left:10px;">
+                            Rating
+                        </label>
+                        <label style="width:5px;">
+
+                        </label>
+                        <label>
+                            <img src="../Images/S1OFF.png" alt="..." onclick="changeimg1('img6', 'img7', 'img8', 'img9', 'img10', 'Rating2')" id="img6"   style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S2OFF.png" alt="..." onclick="changeimg2('img6', 'img7', 'img8', 'img9', 'img10', 'Rating2')" id="img7"   style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S3OFF.png" alt="..." onclick="changeimg3('img6', 'img7', 'img8', 'img9', 'img10', 'Rating2')" id="img8"   style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S4OFF.png" alt="..." onclick="changeimg4('img6', 'img7', 'img8', 'img9', 'img10', 'Rating2')" id="img9"   style="max-width:25px;">
+                        </label>
+                        <label>
+                            <img src="../Images/S5OFF.png" alt="..." onclick="changeimg5('img6', 'img7', 'img8', 'img9', 'img10', 'Rating2')" id="img10"   style="max-width:25px;">
+                        </label>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+          
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments2, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments", @style = "background-color:#f1f1f1;" } })
+                @Html.ValidationMessageFor(model => model.Comments2, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Aspect3, htmlAttributes: new { @class = "control-label col-md-2", @style = "font-family:Calibri;font-style:normal;font-weight:normal;" })
+            <div class="col-md-10" style="padding-top:6px;">
+                <div style="padding-left:10px;">
+                    @Html.DropDownList("Aspect3", null, "Choose", new { style = "width: 150px;font-family:Calibri;font-style:normal;background-color:#f1f1f1;" })
+                </div>
+                </div>
+        </div>
+        <div class="form-group">
+          
+            <div class="col-md-10">
+
+                <div>
+                    <label style="font-family:Calibri;font-style:normal; padding-left:5px;font-weight:normal;padding-left:10px;">
+                        Rating
+                    </label>
+                    <label style="width:5px;">
+
+                    </label>
+                    <label>
+                        <img src="../Images/S1OFF.png" alt="..." onclick="changeimg1('img11', 'img12', 'img13', 'img14', 'img15', 'Rating3')" id="img11"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S2OFF.png" alt="..." onclick="changeimg2('img11', 'img12', 'img13', 'img14', 'img15', 'Rating3')" id="img12"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S3OFF.png" alt="..." onclick="changeimg3('img11', 'img12', 'img13', 'img14', 'img15', 'Rating3')" id="img13"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S4OFF.png" alt="..." onclick="changeimg4('img11', 'img12', 'img13', 'img14', 'img15', 'Rating3')" id="img14"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S5OFF.png" alt="..." onclick="changeimg5('img11', 'img12', 'img13', 'img14', 'img15', 'Rating3')" id="img15"   style="max-width:25px;">
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+          
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments3, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments", @style = "background-color:#f1f1f1;" } })
+                @Html.ValidationMessageFor(model => model.Comments3, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Aspect4, htmlAttributes: new { @class = "control-label col-md-2", @style = "font-family:Calibri;font-style:normal;font-weight:normal;" })
+            <div class="col-md-10" style="padding-top:6px;">
+                <div style="padding-left:10px;">
+                    @Html.DropDownList("Aspect4", null, "Choose", new { style = "width: 150px;font-family:Calibri;font-style:normal;;background-color:#f1f1f1;" })
+                </div>
+                </div>
+        </div>
+        <div class="form-group">
+          
+            <div class="col-md-10">
+
+                <div>
+                    <label style="font-family:Calibri;font-style:normal;font-weight:normal;padding-left:10px;">
+                        Rating
+                    </label>
+                    <label style="width:5px;">
+
+                    </label>
+                    <label>
+                        <img src="../Images/S1OFF.png" alt="..." onclick="changeimg1('img16', 'img17', 'img18', 'img19', 'img20', 'Rating4')" id="img16"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S2OFF.png" alt="..." onclick="changeimg2('img16', 'img17', 'img18', 'img19', 'img20', 'Rating4')" id="img17"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S3OFF.png" alt="..." onclick="changeimg3('img16', 'img17', 'img18', 'img19', 'img20', 'Rating4')" id="img18"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S4OFF.png" alt="..." onclick="changeimg4('img16', 'img17', 'img18', 'img19', 'img20', 'Rating4')" id="img19"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S5OFF.png" alt="..." onclick="changeimg5('img16', 'img17', 'img18', 'img19', 'img20', 'Rating4')" id="img20"   style="max-width:25px;">
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+        
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments4, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments" , @style = "background-color:#f1f1f1;" } })
+                @Html.ValidationMessageFor(model => model.Comments4, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(model => model.Aspect5, htmlAttributes: new { @class = "control-label col-md-2", @style = "font-family:Calibri;font-style:normal;font-weight:normal;" })
+            <div class="col-md-10" style="padding-top:6px;">
+                <div style="padding-left:10px;">
+                    @Html.DropDownList("Aspect5", null, "Choose", new { style = "width: 150px;font-family:Calibri;font-style:normal;;background-color:#f1f1f1;" })
+                </div>
+                </div>
+        </div>
+        <div class="form-group">
+          
+            <div class="col-md-10">
+
+                <div>
+                    <label style="font-family:Calibri;font-style:normal;font-weight:normal;padding-left:10px;">
+                        Rating
+                    </label>
+                    <label style="width:5px;">
+
+                    </label>
+                    <label>
+                        <img src="../Images/S1OFF.png" alt="..." onclick="changeimg1('img21', 'img22', 'img23', 'img24', 'img25', 'Rating5')" id="img21"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S2OFF.png" alt="..." onclick="changeimg2('img21', 'img22', 'img23', 'img24', 'img25', 'Rating5')" id="img22"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S3OFF.png" alt="..." onclick="changeimg3('img21', 'img22', 'img23', 'img24', 'img25', 'Rating5')" id="img23"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S4OFF.png" alt="..." onclick="changeimg4('img21', 'img22', 'img23', 'img24', 'img25', 'Rating5')" id="img24"   style="max-width:25px;">
+                    </label>
+                    <label>
+                        <img src="../Images/S5OFF.png" alt="..." onclick="changeimg5('img21', 'img22', 'img23', 'img24', 'img25', 'Rating5')" id="img25"   style="max-width:25px;">
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+         
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments5, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments", @style = "background-color:#f1f1f1;" } })
+                @Html.ValidationMessageFor(model => model.Comments5, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function changeimg5(img1, img2, img3, img4, img5, Rating) {
+
+            document.getElementById(Rating).value = "5";
+            document.getElementById(img5).src = "../Images/S5ON.png";
+            document.getElementById(img4).src = "../Images/S4OFF.png";
+            document.getElementById(img3).src = "../Images/S3OFF.png";
+            document.getElementById(img2).src = "../Images/S2OFF.png";
+            document.getElementById(img1).src = "../Images/S1OFF.png";
+
+        }
+        function changeimg4(img1, img2, img3, img4, img5, Rating) {
+            document.getElementById(Rating).value = "4";
+            document.getElementById(img5).src = "../Images/S5OFF.png";
+            document.getElementById(img4).src = "../Images/S4ON.png";
+            document.getElementById(img3).src = "../Images/S3OFF.png";
+            document.getElementById(img2).src = "../Images/S2OFF.png";
+            document.getElementById(img1).src = "../Images/S1OFF.png";
+
+        }
+        function changeimg3(img1, img2, img3, img4, img5, Rating) {
+            document.getElementById(Rating).value = "3";
+            document.getElementById(img5).src = "../Images/S5OFF.png";
+            document.getElementById(img4).src = "../Images/S4OFF.png";
+            document.getElementById(img3).src = "../Images/S3ON.png";
+            document.getElementById(img2).src = "../Images/S2OFF.png";
+            document.getElementById(img1).src = "../Images/S1OFF.png";
+
+        }
+        function changeimg2(img1, img2, img3, img4, img5, Rating) {
+
+            document.getElementById(Rating).value = "2";
+            document.getElementById(img5).src = "../Images/S5OFF.png";
+            document.getElementById(img4).src = "../Images/S4OFF.png";
+            document.getElementById(img3).src = "../Images/S3OFF.png";
+            document.getElementById(img2).src = "../Images/S2ON.png";
+            document.getElementById(img1).src = "../Images/S1OFF.png";
+
+        }
+        function changeimg1(img1, img2, img3, img4, img5, Rating) {
+
+
+            document.getElementById(Rating).value = "1";
+            document.getElementById(img5).src = "../Images/S5OFF.png";
+            document.getElementById(img4).src = "../Images/S4OFF.png";
+            document.getElementById(img3).src = "../Images/S3OFF.png";
+            document.getElementById(img2).src = "../Images/S2OFF.png";
+            document.getElementById(img1).src = "../Images/S1ON.png";
+
+        }
+    </script>
+
+}
+

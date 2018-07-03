@@ -1,0 +1,165 @@
+﻿@model ContactSuggestion.Models.ContactSuggestions
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <table class="table">
+        <tr>
+            <td>Start Date</td>
+            <td>End Date</td>
+            <td>Section</td>
+            <td>Category</td>
+            <td>Sub Category</td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(model => model.StartDate)</td>
+            <td>@Html.EditorFor(model => model.EndDate)</td>
+            <td> @Html.DropDownList("Category", ViewData["Category"] as List<SelectListItem>,"Select")   </td>
+            <td> <select id=@Model.SubCategory ><option value="">Select</option></select></td>
+            <td> <select id=@Model.Microcategory  ><option value="">Select</option></select></td>
+        </tr>
+        <tr>
+            <td>Business Name</td>
+            <td>City</td>
+            <td>Location</td>
+            <td>Source</td>
+            <td>Contact</td>
+        </tr>
+        <tr>
+            <td>@Html.EditorFor(model => model.BusinessName)</td>
+            <td> @Html.DropDownList("CityName", ViewData["CityName"] as List<SelectListItem>, "Select") </td>
+            <td><select id=@Model.Location1 ><option value="">Select</option></select></td>
+            <td>@Html.DropDownList("Source", ViewData["Source"] as List<SelectListItem>, "Select")</td>
+            <td> <select id=@Model.Contact ><option value="">Select</option></select></td>
+        </tr>
+        <tr>
+            <td>Platform</td>
+            <td>IsValid</td>
+            <td>IsVerified</td>
+            <td>IsAChain</td>
+            <td>Serve Locally</td>
+        </tr>
+        <tr>
+            <td> @Html.DropDownList("Platform", ViewData["Platform"] as List<SelectListItem>, "Select")</td>
+            <td>@Html.EditorFor(model => model.IsValid)</td>
+            <td>@Html.EditorFor(model => model.VendorIsVerified)</td>
+            <td>@Html.EditorFor(model => model.IsChain)</td>
+            <td>@Html.EditorFor(model => model.isLocal)</td>
+        </tr>
+    </table>
+    <div>
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </div>
+    <table class="table">
+        <tr>
+            <th>
+                BusinessName
+            </th>
+            <th>
+                Mobile
+            </th>
+            <th>
+                City
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                SubCategory
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Section
+            </th>
+            <th>
+                ContactName
+            </th>
+            <th>
+                Source
+            </th>
+            <th>
+                AddedWhen
+            </th>
+            <th>
+                Platform
+            </th>
+            <th>
+                isValid
+            </th>
+            <th>
+                IsVerified
+            </th>
+            <th>
+                Check Google Link
+            </th>
+            <th>
+               Show Map
+            </th>
+            <th>
+                IsAChain
+            </th>
+            <th>
+                Serve Locally
+            </th>
+            <th>
+                IsActive
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @if (Model.ContactSuggestionsList.Count == 0)
+        {
+            <tr>
+                <td colspan="16"> Records not found </td>
+            </tr>
+
+        }
+        else
+        {
+            foreach (var item in Model.ContactSuggestionsList)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.BusinessName) </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BusinessContact)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.CityName) </td>
+
+                    <td>@Html.DisplayFor(modelItem => item.Location1) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Microcategory) </td>
+                    <td>@Html.DisplayFor(modelItem => item.SubCategory) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Category) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Contact) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Source) </td>
+                    <td>@Html.DisplayFor(modelItem => item.AddedWhen) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Platform) </td>
+                    <td>@Html.ActionLink(item.IsActive, "IsValid", new { id = item.UID }) </td>
+                    <td>@Html.DisplayFor(modelItem => item.IsVerified) </td>
+
+                    <td>
+                        <a href="@item.GoogleMaps" title="Check Google Link"   target="_new" >Map</a>
+                    </td>
+
+                    <td>@Html.DisplayFor(modelItem => item.Maps) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Chain) </td>
+                    <td>@Html.DisplayFor(modelItem => item.Local) </td>
+                    <td>@Html.DisplayFor(modelItem => item.DataActive) </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.UID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.UID }, new { onclick = "return confirm('Are you sure you wish to delete this record?');" })
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+
+}

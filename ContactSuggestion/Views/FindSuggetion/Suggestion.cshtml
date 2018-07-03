@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ContactSuggestion.Models.ContactSuggestions>
+
+@{
+    ViewBag.Title = "Suggestion";
+}
+<div  style="display:block">
+    @if ((ContactSuggestion.Models.ContactSuggestions)ViewBag.MySuggesstion != null)
+    {
+        Html.RenderPartial("MySuggestion", (ContactSuggestion.Models.ContactSuggestions)ViewBag.MySuggesstion);
+    }
+
+</div>
+@foreach (var item in Model)
+{
+
+    <div class="panel panel-primary">
+        <div class="panel-body">
+            <span class="text-on-pannel text-primary"> @Html.DisplayFor(modelItem => item.Category)->@Html.DisplayFor(modelItem => item.SubCategory)@Html.DisplayFor(modelItem => item.Microcategory)</span>
+            <p>  BusinessName:@Html.DisplayFor(modelItem => item.BusinessName)<br />
+            BusinessContact: @Html.DisplayFor(modelItem => item.BusinessContact)<br />
+            Location: @Html.DisplayFor(modelItem => item.Location1)<br />
+            City Level: @Html.DisplayFor(modelItem => item.CitiLevelBusiness)<br />
+            Comments: @Html.DisplayFor(modelItem => item.Comments)<br />
+            Contact: @Html.DisplayFor(modelItem => item.ContactName)<br />
+            ContactNumber: @Html.DisplayFor(modelItem => item.ContactNumber)<br />
+            Source:@Html.DisplayFor(modelItem => item.SourceName)<br /> </p>
+        </div>
+    </div>
+}
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+.text-on-pannel {
+  background: #fff none repeat scroll 0 0;
+  height: auto;
+  margin-left: 20px;
+  padding: 3px 5px;
+  position: absolute;
+  margin-top: -47px;
+  border: 1px solid #337ab7;
+  border-radius: 8px;
+}
+
+.panel {
+  /* for text on pannel */
+  margin-top: 27px !important;
+}
+
+.panel-body {
+  padding-top: 30px !important;
+}
+
+</style>

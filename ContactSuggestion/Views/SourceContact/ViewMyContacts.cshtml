@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ContactSuggestion.Models.Contacts>
+
+@{
+    ViewBag.Title = "ViewMyContacts";
+    Layout = "~/Views/Shared/_Layout_ViewMyContact.cshtml";
+}
+
+<table class="table">
+    <tr>
+
+        <th>
+            Contact
+        </th>
+        <th>
+            Number
+        </th>
+        @if (Request.QueryString["srcMobile"] == null)
+        {
+        <th>
+            Source
+        </th>
+        }
+        <th>
+            Location1
+        </th>
+        <th>
+            Location2
+        </th>
+        <th>
+            Location3
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.ContactName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ContactNumber)
+        </td>
+@if (Request.QueryString["srcMobile"] == null)
+{
+        <td>
+            @Html.DisplayFor(modelItem => item.SoruceName)
+        </td>
+}
+        <td>
+            @Html.DisplayFor(modelItem => item.Location1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Location2)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Location3)
+        </td>      
+       
+    </tr>
+}
+
+</table>

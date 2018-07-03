@@ -1,0 +1,559 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Contact Suggestion</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div width="100%" style="width: 100%; background-color: #FFFFFF; min-height: 100%; position: relative;" id="toppanel">
+        <div class="navbar navbar-inverse navbar-fixed-top" style="z-index:1000;background-color:#e6e6e6;" id="header">
+            <div class="container">
+@if (Session["Feedback"] == null)
+{
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @if (Session["Feedback"] == null)
+                    {
+                      @Html.ActionLink("Home", "Create", "ContactDetails", new { area = "" }, new { @class = "navbar-brand" })
+                    }
+                </div>
+}
+else
+{
+    <div class="navbar-header" >
+        @if (Session["Other"] == null)
+        {
+        <table>
+            <tr>
+                <td style="height:50px;width:15px;">
+
+                </td>
+                <td style="vertical-align:middle;text-align:center;">
+                  <img src="~/Images/feedback-b.png" style="width:22px; height:22px;" />  <label style="font-size:17px; color:#5fa1bd; vertical-align:middle;font-family:Calibri; padding-top:6px;">FEEDBACK</label>   
+                </td>
+            </tr>
+        </table>
+        }
+
+    </div>
+}
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        @*<li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("About", "About", "Home")</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
+
+
+                        @if (Session["UserDetails"] != null)
+                        {
+
+                            ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
+                            if (objSource.Role == 2)
+                            {
+
+                                <li>@Html.ActionLink("Add Suggestions", "Create", "ContactDetails")</li>
+                                <li>@Html.ActionLink("Add Contact", "Create", "SourceContact")</li>
+                                <li>@Html.ActionLink("My Suggestions", "MySuggestion", "FindSuggetion")</li>
+                                <li>@Html.ActionLink("My Details", "MyDetails", "SourceContact")</li>
+                                <li>@Html.ActionLink("Find Suggestions", "Index", "FindSuggetion")</li>
+                                <li>@Html.ActionLink("My Contacts", "Index", "SourceContact")</li>
+                                <li>@Html.ActionLink("Add Micro Category", "Index", "Microcategory")</li>
+
+
+                                if (objSource.Mobile == "9867587106" || objSource.Mobile == "9930016598")
+                                {
+                                    <li> @Html.ActionLink("Add Source", "AddSource", "SourceContact") </li>
+                                }
+
+
+                            }
+                            else if (objSource.Role == 1)
+                            {
+                                <li>@Html.ActionLink("Add Suggestions", "Create", "ContactDetails")</li>
+                                <li>@Html.ActionLink("My Suggestions", "MySuggestion", "FindSuggetion")</li>
+                                <li>@Html.ActionLink("My Details", "MyDetails", "SourceContact")</li>
+                                <li>@Html.ActionLink("Find Suggestions", "Index", "FindSuggetion")</li>
+                            }
+                        }
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+@if (Session["Feedback"] == null)
+{
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - © Copyright TAI</p>
+        </footer>
+    </div>
+}
+else
+{
+    <div class="container body-content" style="padding:20px;">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - © Copyright TAI</p>
+        </footer>
+    </div>
+}
+
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryui")
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <script type="text/javascript">
+
+        $(function () {
+            $("#Microcategory").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    obj.subCateId = $("#SubCategoryId").val();
+                    $.ajax({
+                        url: '/ContactDetails/AutoCompleteMicroCate/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i)
+                {
+                    if (document.getElementById("microcateId") != null) {
+                        $("#microcateId").val(i.item.val);
+                    }
+                },
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location1").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i)
+                {
+                    $("#locationId").val(i.item.val);
+                  
+                },
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location4").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location3").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location2").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location5").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+        $(function () {
+            $("#Location6").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoComplete/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#CatId").change(function () {
+                $("#SubCategory").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '/ContactDetails/GetSubCate/',
+                    dataType: 'json',
+                    data: { id: $("#CatId").val() },
+                    success: function (citys) {
+                        // states contains the JSON formatted list
+                        // of states passed from the controller
+                        $.each(citys, function (i, subCate) {
+                            $("#SubCategory").append('<option value="'
+    + subCate.Value + '">'
+    + subCate.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve subcategory.' + ex);
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
+
+
+    <script type="text/javascript">
+
+        var TeamDetailPostBackURL = '/ContactDetails/Details';
+        $(function () {
+            $(".anchorDetail").click(function () {
+
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: TeamDetailPostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    datatype: "json",
+                    success: function (data) {
+
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal(options);
+                        $('#myModal').modal('show');
+
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed.");
+                    }
+                });
+            });
+            //$("#closebtn").on('click',function(){
+            //    $('#myModal').modal('hide');
+
+            $("#closbtn").click(function () {
+                $('#myModal').modal('hide');
+            });
+        });
+
+
+        $(function () {
+
+            $("#Name").autocomplete({
+                source: function (request, response) {
+                    var obj = {};
+                    obj.prefix = request.term;
+                    $.ajax({
+                        url: '/ContactDetails/AutoCompleteMicroCate/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                //select: function (e, i) {
+                //    $("#InstitutionID").val(i.item.val);
+                //    FillInstitution();
+                //},
+                minLength: 2
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $("#SoruceName").autocomplete({
+                source: function (request, response) {
+                    $("#ContactSourceId").val("0");
+                    var obj = {};
+                    obj.prefix = request.term;                   
+
+                    $.ajax({
+                        url: '/SourceContact/AutoCompleteSource/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return item;
+                            }))
+                        },
+                        error: function (response) {
+                            alert("No record found");
+                        },
+                        failure: function (response) {
+                            alert("No record found");
+                        }
+                    });
+                },
+                select: function (e, i) {
+                    $("#ContactSourceId").val(i.item.val);
+
+                },
+                minLength: 2
+            });
+        });
+
+        $(function () {
+
+            $("#Details").autocomplete({
+                source: function (request, response) {
+                   
+                    var obj = {};
+                    obj.prefix = request.term;
+                    obj.subCatId = document.getElementById('SubCategoryId').value;
+                    obj.firstSplitName = document.getElementById('mydrop').value;
+                    $.ajax({
+                        url: '/ContactDetails/MicrocategoryBoxAutolookup/',
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data)
+                        {                           
+                            if (data.length > 0)
+                            {
+                                response($.map(data, function (item) {
+                                    return item;
+                                }))
+                            }
+                            else
+                            {
+                                //If no records found, set the default "No match found" item with value -1.
+                                document.getElementById('mydrop').style.display = "inline";
+                                if (document.getElementById('mydrop').value == "")
+                                {
+                                    document.getElementById('mydrop').style.backgroundColor = "#E9967A";
+                                }
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i)
+                {
+                   
+                    if (i.item.label.split('~').length > 1)
+                    {
+                        document.getElementById('mydrop').style.display = "inline";
+                        document.getElementById('Details').value = $.trim(i.item.label.split('~')[1]);
+                        document.getElementById('mydrop').value = $.trim(i.item.label.split('~')[0]);
+                        document.getElementById('mydrop').style.backgroundColor = "";
+                        return false;
+                    }
+                    else if (i.item.val!=null)
+                    {
+                        document.getElementById('mydrop').style.display = "inline";
+                       // document.getElementById('mydrop').value = "";
+                        //document.getElementById('mydrop').style.backgroundColor = "red";
+                        return false;
+                    }
+                    else
+                    {
+                        document.getElementById('mydrop').style.display = "inline";
+                        document.getElementById('mydrop').value = "";
+                        document.getElementById('mydrop').style.backgroundColor = "#E9967A";
+                        return false;
+                    }
+                   
+                },
+                minLength: 2
+            });
+        });
+    </script>
+</body>
+</html>
