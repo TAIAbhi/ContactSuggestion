@@ -17,7 +17,7 @@ namespace ContactSuggestion.Models
 
         [Display(Name = "Category")]
         public int CatId { get; set; }
-
+        public int ? cityid { get; set; }
         public int SourceId { get; set; }
         public int ContactId { get; set; }
         public string Category { get; set; }
@@ -62,12 +62,12 @@ namespace ContactSuggestion.Models
         public string Details { get; set; }
         [Display(Name = "Is A Chain")]
         public bool  IsAChain { get; set; }
-
+        public int ? locId { get; set; }
         public int locationId { get; set; }
         public int  ? microcateId { get; set; }
         public string AddedWhen { get; set; }
         public string CityName { get; set; }
-
+        public string ReasonForChange { get; set; }
         public bool ? VendorIsVerified { get; set; }
         public bool ? IsValid { get; set; }
         public bool  ? ShowMaps { get; set; }

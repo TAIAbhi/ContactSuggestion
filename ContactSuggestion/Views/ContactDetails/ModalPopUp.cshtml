@@ -17,7 +17,13 @@
             <h4 class="modal-title" id="myModalLabel">Location</h4>
         </div>
         <br />  
-               
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">             
+                @Html.DropDownList("City", ViewData["City"] as List<SelectListItem>, "Select")                
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.Suburb, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -57,7 +63,8 @@
 
                 data: JSON.stringify({
                     'Suburb': document.getElementById('Suburb').value,
-                    'LocationName': document.getElementById('LocationName').value
+                    'LocationName': document.getElementById('LocationName').value,
+                    'City': document.getElementById('City').value
                 }),
 
                 contentType: "application/json; charset=utf-8",
@@ -80,7 +87,7 @@
             source: function (request, response) {
                 $.ajax({
                     url: '/ContactDetails/AutoCompleteSuburb/',
-                    data: "{ 'prefix': '" + request.term + "'}",
+                    data: "{ 'prefix': '" + request.term + "' ,'city':'"+$("#City").val()+"'}",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -110,7 +117,7 @@
             source: function (request, response) {
                 $.ajax({
                     url: '/ContactDetails/AutoCompleteLocationWithSuburb/',                  
-                    data: "{ 'prefix': '" + request.term + "','suburb':'" + $("#Suburb").val() + "'}",
+                    data: "{ 'prefix': '" + request.term + "','suburb':'" + $("#Suburb").val() + "','city':'" + $("#City").val() + "'}",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

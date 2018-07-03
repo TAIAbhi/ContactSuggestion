@@ -489,7 +489,7 @@ namespace BAL
             try
             {
                 string spName = "spGetLocation";
-                SqlParameter[] parameters = new SqlParameter[4];
+                SqlParameter[] parameters = new SqlParameter[5];
                 parameters[0] = new SqlParameter("@LocationId", locationid);
                 if (suburb == string.Empty)
                 {
@@ -515,8 +515,8 @@ namespace BAL
                 {
                     parameters[3] = new SqlParameter("@CityId", cityId);
                 }
-               // parameters[3] = new SqlParameter("@CityId", 1);
-
+                // parameters[3] = new SqlParameter("@CityId", 1);
+                parameters[4] = new SqlParameter("@AreaShortCode", DBNull.Value);
                 if (SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters).Tables.Count > 0)
                 {
                     dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters).Tables[0];
@@ -998,7 +998,7 @@ namespace BAL
             }
             return result;
         }
-        public bool SaveLocation(string suburb, string location)
+        public bool SaveLocation(string suburb, string location, int City)
         {
             bool result = false;
             int noOfEffectedRows = 0;
@@ -1006,11 +1006,12 @@ namespace BAL
             try
             {
                 string spName = "spSaveLoction";
-                SqlParameter[] parameters = new SqlParameter[3];
+                SqlParameter[] parameters = new SqlParameter[4];
                 parameters[0] = new SqlParameter("@Suburb", suburb);
                 parameters[1] = new SqlParameter("@LocationName", location);
                 parameters[2] = new SqlParameter("@IsSaved", outParamSave);
                 parameters[2].Direction = ParameterDirection.Output;
+                parameters[3] = new SqlParameter("@City", City);
                 noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
                 outParamSave = parameters[2].Value == null ? 0 : Convert.ToInt32(parameters[2].Value);
                 if (outParamSave > 0)
@@ -1024,15 +1025,16 @@ namespace BAL
             }
             return result;
         }
-        public DataTable GetSuburb()
+        public DataTable GetSuburb(int city)
         {
             DataTable dtuserDtails = new DataTable();
 
             try
             {
                 string spName = "spLoctionSuburb";
-                SqlParameter[] parameters = new SqlParameter[1];
-                parameters[0] = new SqlParameter("@CityId", 1);
+                SqlParameter[] parameters = new SqlParameter[2];
+                parameters[0] = new SqlParameter("@CityId", city);
+                parameters[1] = new SqlParameter("@AreaShortCode", DBNull.Value);
                 dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters).Tables[0];
 
             }
@@ -1201,6 +1203,7 @@ namespace BAL
                 throw ex;
             }
             return result;
+            
         }
         public DataSet GetSourcesToken()
         {
@@ -1210,6 +1213,23 @@ namespace BAL
             {
                 string spName = "spGetSourcesToken";
                 dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
+        }
+        public DataSet GetSourcesTokenByContactId(int contactId)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+                string spName = "spGetSourcesTokenByContactId";
+                SqlParameter[] parameters = new SqlParameter[1];
+                parameters[0] = new SqlParameter("@ContactId", contactId);
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
 
             }
             catch (Exception ex)
@@ -1308,5 +1328,80 @@ namespace BAL
             }
             return dtuserDtails;
         }
+        public bool VerifySuggesion(int uid)
+        {
+            bool result = false;
+            int noOfEffectedRows = 0;
+            int outParamSave = 0;
+            try
+            {
+
+                string spName = "spVerifyContactSuggestions";
+                SqlParameter[] parameters = new SqlParameter[2];
+                parameters[0] = new SqlParameter("@SuggId", uid);
+                parameters[1] = new SqlParameter("@IsSaved", outParamSave);
+                parameters[1].Direction = ParameterDirection.Output;
+                noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+                outParamSave = parameters[1].Value == null ? 0 : Convert.ToInt32(parameters[1].Value);
+                if (outParamSave > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
+        public bool UpdateContactSuggestions(int suggId, int sourceid, int contactid, string category, string subcate, string microcat, string bussiName, bool iscitilevel, string busCont, string loc1, string loc2, string loc3, string comments, string importdata, string locationId4, string locationId5, string @locationId6, string contactComments, bool isAChain, string platForm, int? city)
+        {
+            bool result = false;
+            int noOfEffectedRows = 0;
+            int outParamSave = 0;
+            try
+            {
+
+
+
+                string spName = "spUpdateContactSuggestions";
+                SqlParameter[] parameters = new SqlParameter[22];
+                parameters[0] = new SqlParameter("@SourceId", sourceid);
+                parameters[1] = new SqlParameter("@ContactId", contactid);
+                parameters[2] = new SqlParameter("@Category", category);
+                parameters[3] = new SqlParameter("@SubCategory", subcate);
+                parameters[4] = new SqlParameter("@Microcategory", microcat);
+                parameters[5] = new SqlParameter("@CitiLevelBusiness", iscitilevel);
+                parameters[6] = new SqlParameter("@BusinessName", bussiName);
+                parameters[7] = new SqlParameter("@BusinessContact", busCont);
+                parameters[8] = new SqlParameter("@LocationId1", loc1);
+                parameters[9] = new SqlParameter("@LocationId2", loc2);
+                parameters[10] = new SqlParameter("@LocationId3", loc3);
+                parameters[11] = new SqlParameter("@Comments", comments);
+                parameters[12] = new SqlParameter("@ImportData", importdata);
+                parameters[13] = new SqlParameter("@LocationId4", locationId4);
+                parameters[14] = new SqlParameter("@LocationId5", locationId5);
+                parameters[15] = new SqlParameter("@LocationId6", locationId6);
+                parameters[16] = new SqlParameter("@ContactComments", contactComments);
+                parameters[17] = new SqlParameter("@IsAChain", isAChain);
+                parameters[18] = new SqlParameter("@IsSaved", outParamSave);
+                parameters[18].Direction = ParameterDirection.Output;
+                parameters[19] = new SqlParameter("@SuggId", suggId);
+                parameters[20] = new SqlParameter("@Platform", platForm);
+                parameters[21] = new SqlParameter("@City", city);
+                noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+                outParamSave = parameters[18].Value == null ? 0 : Convert.ToInt32(parameters[18].Value);
+                if (outParamSave > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
+
     }
 }

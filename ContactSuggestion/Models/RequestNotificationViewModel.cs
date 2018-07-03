@@ -69,6 +69,10 @@ namespace ContactSuggestion.Models
         public int ? subCatId { get; set; }
         public int ? microId { get; set; }
         public int  ? locationId { get; set; }
+        public string contactId { get; set; }
+        public string bussinessName { get; set; }
+        public string suggestionId { get; set; }
+     
 
 
     }

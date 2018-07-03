@@ -11,10 +11,14 @@
 
 
     if (TempData["Success"] != null)
-    {
-        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    {       
+       <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>       
     }
-    <div class="form-horizontal">
+
+        <div class="alert alert-danger" id="divsuccessMessage" style="display:none;"></div>   
+        <div style="height:15px;"></div>
+
+    <div class="form-horizontal" style="overflow-y:scroll;height:400px; padding-top:15px;">
 
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.MobileNumber)
@@ -264,16 +268,97 @@
                 @Html.EditorFor(model => model.Comments5, new { htmlAttributes = new { @class = "form-control  text-box multi-line", @cols = 2, @rows = 2, @Placeholder = "Comments", @style = "background-color:#f1f1f1;" } })
                 @Html.ValidationMessageFor(model => model.Comments5, "", new { @class = "text-danger" })
             </div>
-        </div>
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Submit" class="btn btn-primary" />
-            </div>
-        </div>
+        </div>      
     </div>
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Submit" class="btn btn-primary" onclick="return Validate();" />
+    </div>
+  
+
     <script type="text/javascript">
+        function Validate()
+        {
+            // $("#successMessage").html("");
+            if (document.getElementById("successMessage")!=null)
+            document.getElementById("successMessage").style.display = "none";
+            document.getElementById("divsuccessMessage").style.display = "none";
+            var Aspect1 = document.getElementById("Aspect1").value;
+            var Aspect2 = document.getElementById("Aspect2").value;
+            var Aspect3 = document.getElementById("Aspect3").value;
+            var Aspect4 = document.getElementById("Aspect4").value;
+            var Aspect5 = document.getElementById("Aspect5").value;
+            if (Aspect1 == "" && Aspect2 == "" && Aspect3 == "" && Aspect4 == "" && Aspect5 == "") 
+            {
+             
+                alert("Please select atleast one Aspect.");
+                $("#divsuccessMessage").html("Please select atleast one feedback point.");
+                document.getElementById("divsuccessMessage").style.display = "inline";
+                document.getElementById("divsuccessMessage").focus();
+                return false;
+            }
+
+            var Rating1 = document.getElementById("Rating1").value;
+            var Rating2 = document.getElementById("Rating2").value;
+            var Rating3 = document.getElementById("Rating3").value;
+            var Rating4 = document.getElementById("Rating4").value;
+            var Rating5 = document.getElementById("Rating5").value;
+
+            var Comments1 = document.getElementById("Comments1").value;
+            var Comments2 = document.getElementById("Comments2").value;
+            var Comments3 = document.getElementById("Comments3").value;
+            var Comments4 = document.getElementById("Comments4").value;
+            var Comments5 = document.getElementById("Comments5").value;
+
+           
+            if (Aspect1 != "")
+            {
+                if(Rating1=="" || Comments1=="")
+                {
+                    alert("Please select rating and provide Comments of Aspect1.");
+                    $("#divsuccessMessage").html("Please fill all details of 1st feedback.");
+                    document.getElementById("divsuccessMessage").style.display = "inline";
+                    document.getElementById("divsuccessMessage").focus();
+                    return false;
+                }
+            }
+            if (Aspect2 != "") {
+                if (Rating2 == "" || Comments2 == "") {
+                    $("#divsuccessMessage").html("Please fill all details of 2nd feedback.");
+                    document.getElementById("divsuccessMessage").style.display = "inline";
+                    alert("Please select rating and provide Comments of Aspect2.");
+                    document.getElementById("divsuccessMessage").focus();
+                    return false;
+                }
+            }
+            if (Aspect3 != "") {
+                if (Rating3 == "" || Comments3 == "") {
+                    alert("Please select rating and provide Comments of Aspect3.");
+                    $("#divsuccessMessage").html("Please fill all details of 3rd feedback.");
+                    document.getElementById("divsuccessMessage").style.display = "inline";
+                    document.getElementById("divsuccessMessage").focus();
+                    return false;
+                }
+            }
+            if (Aspect4 != "") {
+                if (Rating4 == "" || Comments4 == "") {
+                    alert("Please select rating and provide Comments of Aspect4.");
+                    $("#divsuccessMessage").html("Please fill all details of 4rth feedback.");
+                    document.getElementById("divsuccessMessage").style.display = "inline";
+                    document.getElementById("divsuccessMessage").focus();
+                    return false;
+                }
+            }
+            if (Aspect5 != "") {
+                if (Rating5 == "" || Comments5 == "") {
+                    alert("Please select rating and provide Comments of Aspect5.");
+                    $("#divsuccessMessage").html("Please fill all details of 5th feedback.");
+                    document.getElementById("divsuccessMessage").style.display = "inline";
+                    document.getElementById("divsuccessMessage").focus();
+                    return false;
+                }
+            }
+
+        }
         function changeimg5(img1, img2, img3, img4, img5, Rating) {
 
             document.getElementById(Rating).value = "5";

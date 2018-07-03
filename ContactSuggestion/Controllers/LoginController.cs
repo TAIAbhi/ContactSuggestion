@@ -189,31 +189,31 @@ namespace ContactSuggestion.Controllers
                     DataRow dr1 = dtXml.NewRow();
                     dr1["Aspect"] = Fb.Aspect1;
                     dr1["Rating"] = Fb.Rating1;
-                    dr1["Comments"] = Fb.Comments1.Trim(); 
+                    dr1["Comments"] = string.IsNullOrEmpty(Fb.Comments1)==true?"": Fb.Comments1.Trim(); 
                     dtXml.Rows.Add(dr1);
 
                     DataRow dr2 = dtXml.NewRow();
                     dr2["Aspect"] = Fb.Aspect2;
                     dr2["Rating"] = Fb.Rating2;
-                    dr2["Comments"] = Fb.Comments2.Trim();
+                    dr2["Comments"] = string.IsNullOrEmpty(Fb.Comments2) == true ? "" : Fb.Comments2.Trim();
                     dtXml.Rows.Add(dr2);
 
                     DataRow dr3 = dtXml.NewRow();
                     dr3["Aspect"] = Fb.Aspect3;
                     dr3["Rating"] = Fb.Rating3;
-                    dr3["Comments"] = Fb.Comments3.Trim();
+                    dr3["Comments"] = string.IsNullOrEmpty(Fb.Comments3) == true ? "" : Fb.Comments3.Trim();
                     dtXml.Rows.Add(dr3);
 
                     DataRow dr4 = dtXml.NewRow();
                     dr4["Aspect"] = Fb.Aspect4;
                     dr4["Rating"] = Fb.Rating4;
-                    dr4["Comments"] = Fb.Comments4.Trim();
+                    dr4["Comments"] = string.IsNullOrEmpty(Fb.Comments4) == true ? "" : Fb.Comments4.Trim();
                     dtXml.Rows.Add(dr4);
 
                     DataRow dr5 = dtXml.NewRow();
                     dr5["Aspect"] = Fb.Aspect5;
                     dr5["Rating"] = Fb.Rating5;
-                    dr5["Comments"] = Fb.Comments5.Trim();
+                    dr5["Comments"] = string.IsNullOrEmpty(Fb.Comments5) == true ? "" : Fb.Comments5.Trim();
                     dtXml.Rows.Add(dr5);
                     StringWriter swSQL2;
                     StringBuilder sbSQL2 = new StringBuilder();
@@ -224,6 +224,7 @@ namespace ContactSuggestion.Controllers
                     if (objUserDetails.SaveFeedback(Fb.MobileNumber, feedbackDetails))
                     {
                         TempData["Success"] = "Your feedback have been submitted successfully!";
+                        
                         return this.RedirectToAction("Feedback", new { mobile = Fb.MobileNumber });
                     }
                     else

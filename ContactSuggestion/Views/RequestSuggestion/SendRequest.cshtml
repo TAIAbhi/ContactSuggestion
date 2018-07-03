@@ -25,10 +25,28 @@
         @Html.HiddenFor(model => model.contactId)
         @Html.HiddenFor(model => model.microcategoryId)
         @Html.HiddenFor(model => model.locationid)
-       <div class="form-group">
-            @Html.LabelFor(model => model.microcategoryName, htmlAttributes: new { @class = "control-label col-md-2" })
+
+      
+        <div class="form-group">
+            @Html.Label("Section", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.microcategoryName, new { htmlAttributes = new { @class = "form-control" } })
+              @Html.DropDownList("categoryName", ViewData["categoryName"] as List<SelectListItem>, "Select", new { @onchange = "FillSubCate();" })  
+                @Html.ValidationMessageFor(model => model.categoryName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Category", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("subcategoryName", ViewData["subcategoryName"] as List<SelectListItem>, "Select", new { @onchange = "FillMicrocategory();" })                
+                
+                @Html.ValidationMessageFor(model => model.subcategoryName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+       <div class="form-group">
+           @Html.Label("SubCategory", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("microcategoryName", ViewData["microcategoryName"] as List<SelectListItem>, "Select")
                 @Html.ValidationMessageFor(model => model.microcategoryName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -53,15 +71,77 @@
         </div>
     </div>
     <script type="text/javascript">
+
+        function FillSubCate() {
+
+            var stateId = $("#categoryName").val();
+            $.ajax
+            ({
+                url: '/SuggetionList/GetSubCate',
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: +stateId
+                }),
+                success: function (data) {
+                    $("#subcategoryName").html("");
+                    $("#microcategoryName").html("");
+                    $('#microcategoryName').html('<option value="">Select</option>');
+                    var district = '<option value="">Select</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        district = district + '<option value=' + data[i].val + '>' + data[i].label + '</option>';
+                    }
+                    // district = district + '</select>';  
+                    $('#subcategoryName').html(district);
+                },
+                error: function () {
+                    alert("Whooaaa! Something went wrong..")
+                },
+            });
+        }
+        function FillMicrocategory() {
+            var stateId = $("#subcategoryName").val();
+            $.ajax
+            ({
+                url: '/SuggetionList/BindDropdown',
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    subCatId: +stateId
+                }),
+                success: function (data) {
+                    //  $("#SubCategory").html("");
+                    $("#microcategoryName").html("");
+                    var district = '<option value="">Select</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        district = district + '<option value=' + data[i].val + '>' + data[i].label + '</option>';
+                    }
+                    // district = district + '</select>';  
+                    $('#microcategoryName').html(district);
+                },
+                error: function () {
+                    alert("Whooaaa! Something went wrong..")
+                },
+            });
+        }
         function  ValidateContact()
         {
 
-            if (document.getElementById('categoryId').value == "0") {
-                alert("Please select Hangouts/Services/Shopping and category.");
+            if (document.getElementById('categoryName').value == "")
+            {
+                alert("Please select section.");
                 return false;
-            }         
-            if (document.getElementById('categoryId').value != "1") {
-                if (document.getElementById('microcategoryId').value == "0") {
+            }
+
+            if (document.getElementById('subcategoryName').value == "") {
+                alert("Please select Category.");
+                return false;
+            }
+            
+            if (document.getElementById('categoryName').value != "1") {
+                if (document.getElementById('microcategoryName').value == "") {
                     alert("Please select sub category.");
                     return false;
                 }

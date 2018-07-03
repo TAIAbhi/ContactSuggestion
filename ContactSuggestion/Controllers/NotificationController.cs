@@ -176,7 +176,7 @@ namespace ContactSuggestion.Controllers
                     {
                         reqSug.RedirectTo = "MyDetail";
                     }
-                    if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, true, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId))
+                    if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, false, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId))
                     {
                         TempData["Success"] = "Added Successfully!";
                         deviceID = Convert.ToString(dtDeviceDetails.Rows[i]["DeviceID"]);

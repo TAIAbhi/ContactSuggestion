@@ -12,23 +12,40 @@ namespace ContactSuggestion.Controllers
     [CustomAuthorize("2", "1")]
     public class ContactDetailsController : Controller
     {
+        private void FillCityDrodown()
+        {
+            DataTable dtContact = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dtContact = objUserDetails.GetCity();
+            IList<CityModel> items = dtContact.AsEnumerable().Select(row =>
+             new CityModel
+             {
+                 CityId = row.Field<int>("CityId"),
+                 CityName = row.Field<string>("CityName")
+             }).ToList();
+
+            // var list = new SelectList(items, "CatId", "Name");
+            var list = new SelectList(items, "CityId", "CityName");
+            ViewData["City"] = list;
+        }
         // GET: ContactDetails
         public ActionResult Index()
         {
             return View();
+
         }
         public ActionResult Details()
         {
-
+            FillCityDrodown();
             return PartialView("ModalPopUp");
         }
         [HttpPost]
-        public ActionResult SaveLocation(string Suburb, string LocationName)
+        public ActionResult SaveLocation(string Suburb, string LocationName, string City)
         {
-            if (!string.IsNullOrEmpty(Suburb.Trim()) && !string.IsNullOrEmpty(LocationName.Trim()))
+            if (!string.IsNullOrEmpty(Suburb.Trim()) && !string.IsNullOrEmpty(LocationName.Trim()) && !string.IsNullOrEmpty(City))
             {
                 UserDetails objUserDetail = new UserDetails();
-                if (objUserDetail.SaveLocation(Suburb.Trim(), LocationName.Trim()))
+                if (objUserDetail.SaveLocation(Suburb.Trim(), LocationName.Trim(),Convert.ToInt32(City)))
                 {
                     return Json(new
                     {
@@ -386,11 +403,11 @@ namespace ContactSuggestion.Controllers
             return Json(location);
         }
         [HttpPost]
-        public JsonResult AutoCompleteSuburb(string prefix)
+        public JsonResult AutoCompleteSuburb(string prefix, int city)
         {
             DataTable dtLocation = new DataTable();
             UserDetails objUserDetails = new UserDetails();
-            dtLocation = objUserDetails.GetSuburb();
+            dtLocation = objUserDetails.GetSuburb(city);
             IList<Location> items = dtLocation.AsEnumerable().Select(row =>
              new Location
              {
@@ -409,20 +426,19 @@ namespace ContactSuggestion.Controllers
             return Json(location);
         }
         [HttpPost]
-        public JsonResult AutoCompleteLocationWithSuburb(string prefix, string suburb)
+        public JsonResult AutoCompleteLocationWithSuburb(string prefix, string suburb, int city)
         {
             DataTable dtLocation = new DataTable();
             UserDetails objUserDetails = new UserDetails();
-            dtLocation = objUserDetails.GetLocation(null, suburb, prefix,1);
+            dtLocation = objUserDetails.GetLocation(null, suburb, prefix, city);
             IList<Location> items = dtLocation.AsEnumerable().Select(row =>
              new Location
              {
                  LocationId = row.Field<int>("LocationId"),
-                 LocationName = row.Field<string>("LocationName"),
+                 LocationName = row.Field<string>("LocationName") == null ? "" : row.Field<string>("LocationName"),
                  Area = row.Field<string>("Area"),
                  City = row.Field<string>("City"),
-                 Suburb = row.Field<string>("Suburb")
-
+                 Suburb = row.Field<string>("Suburb") == null ? "" : row.Field<string>("Suburb")
              }).ToList();
 
             var location = (from loc in items
