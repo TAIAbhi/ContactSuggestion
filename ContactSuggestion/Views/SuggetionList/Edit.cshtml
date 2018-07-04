@@ -1,0 +1,210 @@
+﻿@model ContactSuggestion.Models.ContactSuggestions
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Update Suggestion</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    if (TempData["Success"] != null)
+    {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+    }
+    <div class="form-horizontal">
+     
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+     
+        @Html.HiddenFor(model => model.UID)
+      
+        @Html.HiddenFor(model => model.SourceId)
+        @Html.HiddenFor(model => model.ContactId)         
+        @Html.HiddenFor(model => model.Platform)               
+        
+        <div class="form-group">
+            @Html.Label("Section", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.DropDownList("Category", ViewData["Category"] as List<SelectListItem>, "Select", new { @onchange = "FillSubCate();" }) 
+                @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Category", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SubCategory", ViewData["SubCategory"] as List<SelectListItem>, "Select", new { @onchange = "FillMicrocategory();" })                
+                @Html.ValidationMessageFor(model => model.SubCategory, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("SubCategory", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Microcategory", ViewData["Microcategory"] as List<SelectListItem>, "Select")
+                @Html.ValidationMessageFor(model => model.Microcategory, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BusinessName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BusinessName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BusinessName, "", new { @class = "text-danger" })
+            </div>           
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BusinessContact, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BusinessContact, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BusinessContact, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CitiLevelBusiness, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.CitiLevelBusiness)
+                    @Html.ValidationMessageFor(model => model.CitiLevelBusiness, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CityName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+              @Html.DropDownList("CityName", ViewData["CityName"] as List<SelectListItem>, "Select", new { @onchange = "FillLocation();" }) 
+                @Html.ValidationMessageFor(model => model.CityName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Location1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Location1", ViewData["Location1"] as List<SelectListItem>, "Select")
+                @Html.ValidationMessageFor(model => model.Location1, "", new { @class = "text-danger" })
+            </div>
+        </div>       
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+            </div>
+        </div>   
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsAChain, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsAChain)
+                    @Html.ValidationMessageFor(model => model.IsAChain, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>      
+
+        <div class="form-group">
+            @Html.Label("Reason For Change", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReasonForChange, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ReasonForChange, "", new { @class = "text-danger" })
+            </div>
+        </div>   
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update Suggetion" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function FillSubCate()
+        {
+
+            var stateId = $("#Category").val();
+            $.ajax
+            ({
+                url: '/SuggetionList/GetSubCate',
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: +stateId
+                }),
+                success: function (data) {
+                    $("#SubCategory").html("");
+                    $("#Microcategory").html("");
+                    $('#Microcategory').html('<option value="">Select</option>');
+                   var district ='<option value="">Select</option>';
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        district = district + '<option value=' + data[i].val + '>' + data[i].label + '</option>';
+                    }
+                   // district = district + '</select>';
+                    $('#SubCategory').html(district);
+                }  ,
+                error: function () {
+                    alert("Whooaaa! Something went wrong..")
+                },
+            });
+        }
+        function FillMicrocategory()
+        {
+            var stateId = $("#SubCategory").val();
+            $.ajax
+            ({
+                url: '/SuggetionList/BindDropdown',
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    subCatId: +stateId
+                }),
+                success: function (data) {
+                  //  $("#SubCategory").html("");
+                    $("#Microcategory").html("");
+                    var district = '<option value="">Select</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        district = district + '<option value=' + data[i].val + '>' + data[i].label + '</option>';
+                    }
+                    // district = district + '</select>';
+                    $('#Microcategory').html(district);
+                },
+                error: function () {
+                    alert("Whooaaa! Something went wrong..")
+                },
+            });
+        }
+        function FillLocation()
+        {
+            var stateId = $("#CityName").val();
+            $.ajax
+            ({
+                url: '/SuggetionList/AutoCompleteLocationWithSuburb',
+                type: 'POST',
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    city: +stateId
+                }),
+                success: function (data) {
+                    //  $("#SubCategory").html("");
+                    $("#Location1").html("");
+                    var district = '<option value="">Select</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        district = district + '<option value=' + data[i].val + '>' + data[i].label + '</option>';
+                    }
+                    // district = district + '</select>';
+                    $('#Location1').html(district);
+                },
+                error: function () {
+                    alert("Whooaaa! Something went wrong..")
+                },
+            });
+        }
+       
+    </script>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

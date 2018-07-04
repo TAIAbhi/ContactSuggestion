@@ -118,32 +118,35 @@ namespace ContactSuggestion.Controllers
             DataTable dtLocation = new DataTable();
             UserDetails objUserDetails = new UserDetails();
             // int? cateID = !string.IsNullOrEmpty(Category)
-            DataTable dtAllLocation = objUserDetails.GetLocation(locId, string.Empty, string.Empty, cityId);
-            Location1 = string.IsNullOrEmpty(Convert.ToString(dtAllLocation.Rows[0]["LocationName"])) ? Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim() : Convert.ToString(dtAllLocation.Rows[0]["LocationName"]).Trim() + " - " + Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim();
+            if (locId != null)
+            {
+                DataTable dtAllLocation = objUserDetails.GetLocation(locId, string.Empty, string.Empty, cityId);
+                Location1 = string.IsNullOrEmpty(Convert.ToString(dtAllLocation.Rows[0]["LocationName"])) ? Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim() : Convert.ToString(dtAllLocation.Rows[0]["LocationName"]).Trim() + " - " + Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim();
+            }
 
             dtLocation = objUserDetails.GetSuggestionList(ReturnData<int?>(Category), ReturnData<int?>(SubCategory), null, ReturnData<int?>(Contact), "", ReturnData<int?>(Source), ReturnData<string>(BusinessName), ReturnData<bool?>(isLocal), ReturnData<string>(Location1), ReturnData<int?>(Microcategory), "", ReturnData<int?>(CityName), ReturnData<DateTime?>(StartDate), ReturnData<DateTime?>(EndDate), ReturnData<bool?>(IsChain), ReturnData<bool?>(IsValid), ReturnData<bool?>(IsValid)).Tables[0];
             IList<ContactSuggestions> items = dtLocation.AsEnumerable().Select(row =>
              new ContactSuggestions
              {
                  UID = row.Field<int>("UID").ToString(),
-                 BusinessName = row.Field<string>("BusinessName"),
-                 BusinessContact = row.Field<string>("BusinessContact"),
-                 CityName = row.Field<string>("CityName"),
-                 Location1 = row.Field<string>("LocationId1"),
-                 Microcategory = row.Field<string>("Microcategory"),
-                 SubCategory = row.Field<string>("SubCategoryName"),
-                 Category = row.Field<string>("CategoryName"),
-                 Source = row.Field<string>("SourceName"),
-                 Contact = row.Field<string>("ContactName"),
-                 AddedWhen = row.Field<string>("AddedWhen"),
-                 Platform = row.Field<string>("Platform"),
-                 Chain = row.Field<string>("IsAChain"),
-                 Local = row.Field<string>("CitiLevelBusiness"),
-                 IsVerified = row.Field<string>("VendorIsVerified"),
-                 IsActive = row.Field<string>("IsValid"),
-                 Maps = row.Field<string>("ShowMaps"),
-                 DataActive = row.Field<string>("IsActive"),
-                 GoogleMaps = "https://www.google.com/maps/search/" + row.Field<string>("BusinessName").Trim() + "+" + (row.Field<string>("LocationId1").Split('-').Length > 1 ? row.Field<string>("LocationId1").Split('-')[1] : row.Field<string>("LocationId1")).Trim()
+                 BusinessName = row.Field<string>("BusinessName")==null?"": row.Field<string>("BusinessName"),
+                 BusinessContact = row.Field<string>("BusinessContact")==null?"": row.Field<string>("BusinessContact"),
+                 CityName = row.Field<string>("CityName")==null?"": row.Field<string>("CityName"),
+                 Location1 = row.Field<string>("LocationId1")==null?"": row.Field<string>("LocationId1"),
+                 Microcategory = row.Field<string>("Microcategory")==null?"": row.Field<string>("Microcategory"),
+                 SubCategory = row.Field<string>("SubCategoryName")==null?"": row.Field<string>("SubCategoryName"),
+                 Category = row.Field<string>("CategoryName")==null?"": row.Field<string>("CategoryName"),
+                 Source = row.Field<string>("SourceName")==null?"" : row.Field<string>("SourceName"),
+                 Contact = row.Field<string>("ContactName")==null?"": row.Field<string>("ContactName"),
+                 AddedWhen = row.Field<string>("AddedWhen")==null? "": row.Field<string>("AddedWhen"),
+                 Platform = row.Field<string>("Platform")==null?"": row.Field<string>("Platform"),
+                 Chain = row.Field<string>("IsAChain")==null?"":row.Field<string>("IsAChain"),
+                 Local = row.Field<string>("CitiLevelBusiness")==null?"": row.Field<string>("CitiLevelBusiness"),
+                 IsVerified = row.Field<string>("VendorIsVerified")==null?"":row.Field<string>("VendorIsVerified"),
+                 IsActive = row.Field<string>("IsValid")==null?"": row.Field<string>("IsValid"),
+                 Maps = row.Field<string>("ShowMaps")==null?"": row.Field<string>("ShowMaps"),
+                 DataActive = row.Field<string>("IsActive")==null?"": row.Field<string>("IsActive"),
+                 GoogleMaps = "https://www.google.com/maps/search/" + (row.Field<string>("BusinessName")==null?"": row.Field<string>("BusinessName").Trim()) + "+" + (row.Field<string>("LocationId1")!=null? (row.Field<string>("LocationId1").Split('-').Length > 1 ? row.Field<string>("LocationId1").Split('-')[1] : row.Field<string>("LocationId1")):"").Trim()
 
 
              }).ToList();
