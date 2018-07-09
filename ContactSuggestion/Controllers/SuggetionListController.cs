@@ -684,7 +684,35 @@ namespace ContactSuggestion.Controllers
                 string str = ex.Message;
             }
         }
-       
+
+        public ActionResult Delete(int? id)
+        {
+            UserDetails objUserDetails = new UserDetails();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }           
+            else
+            {
+                objUserDetails.DeleteSuggesion(Convert.ToInt32(id), "record deleted from web");
+                TempData["Success"] = "Deleted Successfully!";
+                return RedirectToAction("Index");
+            }
+        }
+        public ActionResult IsValid(int? id)
+        {
+            UserDetails objUserDetails = new UserDetails();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                objUserDetails.VerifySuggesion(Convert.ToInt32(id));
+                TempData["Success"] = "Validated Successfully!";
+                return RedirectToAction("Index");
+            }
+        }
     }
 
 }

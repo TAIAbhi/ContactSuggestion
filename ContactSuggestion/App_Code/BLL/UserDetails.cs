@@ -1402,6 +1402,33 @@ namespace BAL
             }
             return result;
         }
+        public bool DeleteSuggesion(int uid, string reasonForChange)
+        {
+            bool result = false;
+            int noOfEffectedRows = 0;
+            int outParamSave = 0;
+            try
+            {
+
+                string spName = "spDeleteContactSuggestions";
+                SqlParameter[] parameters = new SqlParameter[3];
+                parameters[0] = new SqlParameter("@SuggId", uid);
+                parameters[1] = new SqlParameter("@IsSaved", outParamSave);
+                parameters[1].Direction = ParameterDirection.Output;
+                parameters[2] = new SqlParameter("@ReasonForChange", reasonForChange);
+                noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+                outParamSave = parameters[1].Value == null ? 0 : Convert.ToInt32(parameters[1].Value);
+                if (outParamSave > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
 
     }
 }
