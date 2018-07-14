@@ -11,6 +11,7 @@ namespace ContactSuggestion.Models
         public int ContactId { get; set; }
         public string Name { get; set; }
         public string Mobile { get; set; }
+        public string Token { get; set; }
 
         public string Password { get; set; }
         [DataType(DataType.Password)]

@@ -327,15 +327,18 @@ namespace ContactSuggestion.Controllers
             });
         }
 
-        public ActionResult loginSubmit(string userID, string password)
+        public ActionResult loginSubmit(string userID, string password, string token)
         {
             try
             {
 
-           
-            UserDetails objUserDetails = new UserDetails();
-            string msg = string.Empty;
-            if (!string.IsNullOrEmpty(userID.Trim()) && !string.IsNullOrEmpty(password.Trim()))
+                string controllerName = string.Empty;
+                string actionName = string.Empty;
+                UserDetails objUserDetails = new UserDetails();
+                Source objSource = new Source();
+                string msg = string.Empty;
+
+            if (!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(password))
             {
                 userID = objUserDetails.MobileFormat(userID);
                 Int64 isNumber = 0;
@@ -345,10 +348,10 @@ namespace ContactSuggestion.Controllers
                     if (isNumber > 0)
                     {
                         int admin = 0;
-                        Source objSource = new Source();
+                        //Source objSource = new Source();
 
                         DataTable dtSource = new DataTable();
-                        dtSource = objUserDetails.GetSourceDetails(userID, password, out admin);
+                        dtSource = objUserDetails.GetSourceDetails(userID.Trim(), password.Trim(), out admin);
 
                         if (dtSource.Rows.Count > 0)
                         {
@@ -367,8 +370,7 @@ namespace ContactSuggestion.Controllers
                             Globals.TheUserSession = objSource;
 
 
-                            string controllerName = string.Empty;
-                            string actionName = string.Empty;
+                          
                             if (objSource.SkipVideo)
                             {
                                 controllerName = "SourceContact";
@@ -412,6 +414,38 @@ namespace ContactSuggestion.Controllers
                 }
 
             }
+            else if(!string.IsNullOrEmpty(token))
+                {
+                    DataTable dtVenders = new DataTable();
+                    dtVenders = objUserDetails.GetVenderDetails(token.Trim()).Tables[0];
+                    if(dtVenders!=null)
+                    {
+                        if(dtVenders.Rows.Count>0)
+                        {
+                            objSource.Role = 1;
+                            Globals.TheUserSession = objSource;
+                            Session["Token"] = token;
+                            controllerName = "Vender";
+                            actionName = "Upload";
+                            return Json(new
+                            {
+                                redirectUrl = Url.Action(actionName, controllerName),
+                                isRedirect = true,
+                                Message = ""
+                            });
+                        }
+                        else
+                        {
+                            msg = "Invalid token.";
+                        }
+                    }
+                    else
+                    {
+                        msg = "Invalid token.";
+                    }
+                }
+
+           
                 return Json(new
                 {
                     Message = msg

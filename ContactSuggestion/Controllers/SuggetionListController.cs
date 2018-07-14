@@ -17,6 +17,7 @@ using System.IO;
 
 namespace ContactSuggestion.Controllers
 {
+    [CustomAuthorize("2", "1")]
     public class SuggetionListController : Controller
     {
         //public object ReturnData(string data)
@@ -434,16 +435,24 @@ namespace ContactSuggestion.Controllers
         [HttpPost]
         public ActionResult Edit([Bind(Include = "UID, SourceId,  ContactId,  Category,  SubCategory,  Microcategory,  BusinessName,  CitiLevelBusiness,  BusinessContact,  Location1,  Comments, IsAChain,  Platform,  CityName,ReasonForChange")] ContactSuggestions contactSugg)
         {
-            int locID = Convert.ToInt32(contactSugg.Location1);
+            int  locID = Convert.ToInt32(contactSugg.Location1);
+            int? micorID = null;
+            if(!string.IsNullOrEmpty(contactSugg.Microcategory))
+            {
+                micorID = Convert.ToInt32(contactSugg.Microcategory);
+            }
             if (ModelState.IsValid)
             {
                 string message = string.Empty;
                 //  CustomResponseMessage custMessage = new CustomResponseMessage();
-              
+                ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
                 UserDetails objUserDetails = new UserDetails();
                 try
                 {
                     DataTable dtDeviceDetails = objUserDetails.GetSourcesTokenByContactId(contactSugg.ContactId).Tables[0];
+
+                   DataTable dtDevices = objUserDetails.GetDeviceDetails(contactSugg.ContactId);
+
                     //ContactSuggestions objContactSugg = GetContact(contactSugg.contactId);
                     contactSugg.BusinessContact = objUserDetails.MobileFormat(contactSugg.BusinessContact);                   
 
@@ -459,10 +468,14 @@ namespace ContactSuggestion.Controllers
                         {
                             if (objUserDetails.UpdateContactSuggestions(Convert.ToInt32(contactSugg.UID), contactSugg.SourceId, contactSugg.ContactId, contactSugg.Category, contactSugg.SubCategory, contactSugg.Microcategory, contactSugg.BusinessName, contactSugg.CitiLevelBusiness, contactSugg.BusinessContact, contactSugg.Location1, contactSugg.Location2, contactSugg.Location3, contactSugg.Comments, "", "", "", "", contactSugg.ContactComments, contactSugg.IsAChain, contactSugg.Platform,Convert.ToInt32(contactSugg.CityName)))
                             {
-
-                                // custMessage.action = "Success";
+                                for (int i = 0; i < dtDevices.Rows.Count; i++)
+                                {
+                                    objUserDetails.SaveNotificationForWebSend(0, Convert.ToInt32(contactSugg.SubCategory), micorID, contactSugg.ContactId, Convert.ToInt32(dtDevices.Rows[i]["UID"]), contactSugg.ReasonForChange, "ModYourSug", false, "Suggestion Updated", locID, "Suggestion Updated", "ViewSugg",objSource.ContactId);
+                                }
+                                    // custMessage.action = "Success";
                                 // custMessage.message = "Update Successfully!";
                                 TempData["Success"] = "Update Successfully!";
+
                                 PushAndroidNotification(Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]), Convert.ToInt32(contactSugg.Category), Convert.ToInt32(contactSugg.SubCategory), Convert.ToInt32(contactSugg.Microcategory), Convert.ToInt32(locID), contactSugg.ReasonForChange, "","", contactSugg.BusinessName, contactSugg.ContactId.ToString(), contactSugg.UID, contactSugg.ReasonForChange);
                             }
                             else
@@ -486,6 +499,10 @@ namespace ContactSuggestion.Controllers
                     {
                         if (objUserDetails.UpdateContactSuggestions(Convert.ToInt32(contactSugg.UID), contactSugg.SourceId, contactSugg.ContactId, contactSugg.Category, contactSugg.SubCategory, contactSugg.Microcategory, contactSugg.BusinessName, contactSugg.CitiLevelBusiness, contactSugg.BusinessContact, contactSugg.Location1, contactSugg.Location2, contactSugg.Location3, contactSugg.Comments, "", "", "", "", contactSugg.ContactComments, contactSugg.IsAChain, contactSugg.Platform, Convert.ToInt32(contactSugg.CityName)))
                         {
+                            for (int i = 0; i < dtDevices.Rows.Count; i++)
+                            {
+                                objUserDetails.SaveNotificationForWebSend(0, Convert.ToInt32(contactSugg.SubCategory), micorID, contactSugg.ContactId, Convert.ToInt32(dtDevices.Rows[i]["UID"]), contactSugg.ReasonForChange, "ModYourSug", false, "Suggestion Updated", locID, "Suggestion Updated", "ViewSugg", objSource.ContactId);
+                            }
 
                             // custMessage.action = "Success";
                             // custMessage.message = "Update Successfully!";
@@ -622,6 +639,7 @@ namespace ContactSuggestion.Controllers
             objNotifications.sound = "default";
             objNotifications.vibrate = "default";
             objNotifications.priority = "high";
+           // objNotifications.
             objPushnotification.notification = objNotifications;
             PushData objPushData = new PushData();
             objPushData.title = "Your suggestion updated has been updated";
@@ -702,13 +720,15 @@ namespace ContactSuggestion.Controllers
         public ActionResult IsValid(int? id)
         {
             UserDetails objUserDetails = new UserDetails();
+            ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             else
             {
-                objUserDetails.VerifySuggesion(Convert.ToInt32(id));
+                Guid objGuid = Guid.NewGuid();
+                objUserDetails.VerifySuggesion(Convert.ToInt32(id), objGuid.ToString(), objSource.ContactId);
                 TempData["Success"] = "Validated Successfully!";
                 return RedirectToAction("Index");
             }

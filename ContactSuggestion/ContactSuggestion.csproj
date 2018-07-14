@@ -183,6 +183,7 @@
     <Compile Include="Controllers\RequestSuggestionController.cs" />
     <Compile Include="Controllers\SourceContactController.cs" />
     <Compile Include="Controllers\SuggetionListController.cs" />
+    <Compile Include="Controllers\VenderController.cs" />
     <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -203,6 +204,7 @@
     <Compile Include="Models\Ranks.cs" />
     <Compile Include="Models\RequestNotificationViewModel.cs" />
     <Compile Include="Models\RequestSuggetions.cs" />
+    <Compile Include="Models\VenderViewModel.cs" />
     <Compile Include="Models\VideoResult.cs" />
     <Compile Include="Models\Source.cs" />
     <Compile Include="Models\SubCategory.cs" />
@@ -351,6 +353,7 @@
     <Content Include="Views\Shared\_Layout - Copy.cshtml" />
     <Content Include="Views\SuggetionList\Index.cshtml" />
     <Content Include="Views\SuggetionList\Edit.cshtml" />
+    <Content Include="Views\Vender\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

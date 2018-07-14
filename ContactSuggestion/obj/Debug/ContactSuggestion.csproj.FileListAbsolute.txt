@@ -133,6 +133,6 @@ D:\Abhi\WebApp\ContactSuggestion\bin\Microsoft.Owin.Security.OAuth.xml
 D:\Abhi\WebApp\ContactSuggestion\bin\Microsoft.Owin.Security.Google.xml
 D:\Abhi\WebApp\ContactSuggestion\bin\Microsoft.Owin.Security.Twitter.xml
 D:\Abhi\WebApp\ContactSuggestion\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-D:\Abhi\WebApp\ContactSuggestion\obj\Debug\ContactSuggestion.csprojResolveAssemblyReference.cache
 D:\Abhi\WebApp\ContactSuggestion\obj\Debug\ContactSuggestion.dll
 D:\Abhi\WebApp\ContactSuggestion\obj\Debug\ContactSuggestion.pdb
+D:\Abhi\WebApp\ContactSuggestion\obj\Debug\ContactSuggestion.csprojResolveAssemblyReference.cache

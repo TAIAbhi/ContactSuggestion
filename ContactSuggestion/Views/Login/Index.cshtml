@@ -39,6 +39,21 @@
                     </div>
                 </div>
 
+                <h4>Venders Login.</h4>
+                <hr />
+                <div class="form-group">
+                    @Html.Label("Token", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Token, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Token, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="button" onclick="GetVenderData()" value="Vender Login"  class="btn btn-primary" />
+                    </div>
+                </div>
+
             }
         </section>
     </div>
@@ -117,7 +132,42 @@
         }
         }
 
+    function GetVenderData() {
 
+        var isValid = true;
+        if (document.getElementById('Token').value == "") {
+            alert("Please enter Token Number.");
+            document.getElementById('Token').focus();
+            isValid = false;
+            return false;
+
+        }
+       
+        if (isValid) {
+
+            $.ajax({
+                url: "/Login/loginSubmit",
+                type: "POST",
+
+                data: JSON.stringify({
+                    'token': document.getElementById('Token').value
+                }),
+
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.Message != "") {
+                        alert(data.Message);
+                    }
+                    if (data.isRedirect) {
+
+                        window.location.href = data.redirectUrl;
+
+                    }
+
+                },
+            })
+        }
+    }
 
 </script>
 @section Scripts {

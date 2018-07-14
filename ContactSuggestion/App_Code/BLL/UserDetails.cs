@@ -1328,7 +1328,7 @@ namespace BAL
             }
             return dtuserDtails;
         }
-        public bool VerifySuggesion(int uid)
+        public bool VerifySuggesion(int uid, string loginToken, int addedBy)
         {
             bool result = false;
             int noOfEffectedRows = 0;
@@ -1337,10 +1337,12 @@ namespace BAL
             {
 
                 string spName = "spVerifyContactSuggestions";
-                SqlParameter[] parameters = new SqlParameter[2];
+                SqlParameter[] parameters = new SqlParameter[4];
                 parameters[0] = new SqlParameter("@SuggId", uid);
                 parameters[1] = new SqlParameter("@IsSaved", outParamSave);
                 parameters[1].Direction = ParameterDirection.Output;
+                parameters[2] = new SqlParameter("@LoginToken",loginToken);
+                parameters[3] = new SqlParameter("@AddedBy", addedBy);
                 noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
                 outParamSave = parameters[1].Value == null ? 0 : Convert.ToInt32(parameters[1].Value);
                 if (outParamSave > 0)
@@ -1428,6 +1430,24 @@ namespace BAL
                 throw ex;
             }
             return result;
+        }
+        
+      public DataSet GetVenderDetails(string token)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+                string spName = "spGetVenderDetails";
+                SqlParameter[] parameters = new SqlParameter[1];
+                parameters[0] = new SqlParameter("@LoginToken", token);
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
         }
 
     }

@@ -18,7 +18,7 @@ namespace ContactSuggestion.Models
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
             bool authorize = false;
-            Source up = (Source)Globals.TheUserSession;
+            Source up = (Source)Globals.TheUserSession;            
             foreach (var role in allowedroles)
             {
                 if(up.Role==Convert.ToInt32(role))
@@ -26,6 +26,7 @@ namespace ContactSuggestion.Models
                     authorize = true;
                 }               
             }
+           
             return authorize;
         }
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)

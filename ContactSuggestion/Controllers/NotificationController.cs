@@ -16,6 +16,7 @@ using System.IO;
 
 namespace ContactSuggestion.Controllers
 {
+    [CustomAuthorize("2", "1")]
     public class NotificationController : Controller
     {
         [HttpPost]
@@ -175,6 +176,10 @@ namespace ContactSuggestion.Controllers
                     if (reqSug.NotificationType == "MyDetail")
                     {
                         reqSug.RedirectTo = "MyDetail";
+                    }
+                    if (reqSug.NotificationType == "ModYourSug")
+                    {
+                        reqSug.RedirectTo = "ViewSugg";
                     }
                     if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, false, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId))
                     {
