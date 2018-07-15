@@ -661,7 +661,7 @@ namespace ContactSuggestion.Controllers
         {
             try
             {
-                string applicationID = "AAAAS7HcV0s:APA91bF436VQayZCb-O3blmqqovG-8ttC78jbyPVUXmgOrvCNRU8A94CWqg20lsamKjxcU2k5iPTnn2oiGJ6_hVWprBhXLD_3NtZZwDz7-0utoLGprkzIm06OYR2zn43m4qGkS5V-Jep";
+                string applicationID = System.Configuration.ConfigurationManager.AppSettings["RegKey"]; //"AAAAS7HcV0s:APA91bF436VQayZCb-O3blmqqovG-8ttC78jbyPVUXmgOrvCNRU8A94CWqg20lsamKjxcU2k5iPTnn2oiGJ6_hVWprBhXLD_3NtZZwDz7-0utoLGprkzIm06OYR2zn43m4qGkS5V-Jep";
                 HttpWebRequest tRequest = (HttpWebRequest)WebRequest.Create(api);
                 tRequest.Method = "post";
                 tRequest.ContentType = "application/json";
