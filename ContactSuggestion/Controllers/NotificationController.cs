@@ -143,9 +143,9 @@ namespace ContactSuggestion.Controllers
             {
                 ContactSuggestion.Models.Source objSource = (ContactSuggestion.Models.Source)Session["UserDetails"];
               //  UserDetails objUserDetails = new UserDetails();
-                string deviceID = string.Empty;
-                string token = string.Empty;
-                string type = string.Empty;
+                //string deviceID = string.Empty;
+                //string token = string.Empty;
+                //string type = string.Empty;
                 UserDetails objUserDetails = new UserDetails();
                 DataTable dtDeviceDetails = new DataTable();
                 DataTable dtlocation = new DataTable();
@@ -184,11 +184,19 @@ namespace ContactSuggestion.Controllers
                     if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, false, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId))
                     {
                         TempData["Success"] = "Added Successfully!";
-                        deviceID = Convert.ToString(dtDeviceDetails.Rows[i]["DeviceID"]);
-                        type = Convert.ToString(dtDeviceDetails.Rows[i]["Type"]);
-                        token = Convert.ToString(dtDeviceDetails.Rows[i]["Token"]);
-                        dtDeviceDetails = objUserDetails.GetSourcesToken().Tables[0];
-                        dtDeviceUIDList = objUserDetails.GetSourcesToken().Tables[1];
+                       // deviceID = Convert.ToString(dtDeviceDetails.Rows[i]["DeviceID"]);
+                       // type = Convert.ToString(dtDeviceDetails.Rows[i]["Type"]);
+                        //token = Convert.ToString(dtDeviceDetails.Rows[i]["Token"]);
+                        if (reqSug.NotificationType == "ProvdReqdsugg")
+                        {
+                            dtDeviceDetails = objUserDetails.GetSourcesToken().Tables[0];
+                            dtDeviceUIDList = objUserDetails.GetSourcesToken().Tables[1];
+                        }
+                        else
+                        {
+                            dtDeviceDetails = objUserDetails.GetSourcesTokenByContactId(reqSug.ContactId).Tables[0];
+                            dtDeviceUIDList = objUserDetails.GetSourcesTokenByContactId(reqSug.ContactId).Tables[1];
+                        }
                        // string[] strSplit = Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]).Length > 0 ? Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]).Split('|') : null;
                         PushAndroidNotification(Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]), reqSug.CatId, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.LocationId, reqSug.NotificationTitle, reqSug.Text, Convert.ToString(dtDeviceUIDList.Rows[0]["UIDList"]));
 

@@ -7,10 +7,11 @@
 
 <h2>Upload Venders Details</h2>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Upload", "Vender", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
+ 
     <div class="form-horizontal">
        
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -47,12 +48,27 @@
                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
             </div>
         </div>
-       
+        <div class="form-group">
+            @Html.Label("Document", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("DocumentId", ViewData["DocumentId"] as List<SelectListItem>, "Select", htmlAttributes: new { @class = "form-control" })               
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">File</label>
+            <div class="col-md-10">
+                <input type="file" name="fileupload1" id="fileupload1" value=" " />
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-10">
                 <input type="submit" value="Upload" class="btn btn-primary" onclick="return ValidateData();" />
             </div>
         </div>
+       @if (TempData["Success"] != null)
+        {
+        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+        }
     </div>
    <script type="text/javascript">
        function ValidateData() {
@@ -63,6 +79,22 @@
            if (document.getElementById('Email').value == "") {
                alert("Please select Email.");
                return false;
+           }
+           if (document.getElementById('DocumentId').value == "") {
+               alert("Please select Document.");
+               return false;
+           }
+           if (document.getElementById('fileupload1').value == "") {
+               alert("Please upload document for selected document type.");
+               return false;
+           }
+           var array = ['pdf', 'doc', 'docx', 'txt', 'xlsx', 'ppt', 'zip'];
+           var xyz = document.getElementById("fileupload1");
+           var Extension = xyz.value.substring(xyz.value.lastIndexOf('.') + 1).toLowerCase();
+           if (array.indexOf(Extension) <= -1) {
+               alert("Please Upload only pdf,doc,zip,txt.xlsx and ppt extension flle");
+               return false;
+
            }
        }
    </script>

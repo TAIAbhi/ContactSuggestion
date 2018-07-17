@@ -48,12 +48,57 @@ namespace ContactSuggestion.Controllers
 
                  }).ToList();
                 objVenderViewModel = items.Where(a => a.LoginToken == token).FirstOrDefault();
-
+                FillDocumentDropdown(objVenderViewModel.CatId, objVenderViewModel.SubCatId, objVenderViewModel.MicroCatId);
             }
             else
             {
                 return RedirectToAction("Index", "Login");
             }
+            return View(objVenderViewModel);
+        }
+        private void FillDocumentDropdown(int catid, int subcatid, int? micId)
+        {
+            DataTable dtContact = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dtContact = objUserDetails.GetDocumentType(catid, subcatid, micId).Tables[0];
+            IList<Document> items = dtContact.AsEnumerable().Select(row =>
+             new Document
+             {
+                 DocumentTypeId = row.Field<Int16>("DocumentTypeId"),
+                 DocumentTypeName = row.Field<string>("DocumentTypeName")
+             }).ToList();
+
+            var list = new SelectList(items, "DocumentTypeId", "DocumentTypeName");
+            ViewData["DocumentId"] = list;
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Upload([Bind(Include = "VendorId,Address,Email,DocumentId,ContactId")] VenderViewModel objVenderViewModel, HttpPostedFileBase fileupload1)
+        {
+            if (ModelState.IsValid)
+            {
+                if (fileupload1 != null)
+                {
+                    var fileName = Path.GetFileName(fileupload1.FileName);
+                    string[] splitFileName = fileName.Split('.');
+                    var newFile = splitFileName[0].ToString();
+                    var extension = splitFileName[1].ToString();
+                    Guid g = Guid.NewGuid();
+                    var newFileName = objVenderViewModel.VendorId.ToString()+"_" + g.ToString() + "." + extension;
+                    string path = Path.Combine(Server.MapPath("~/FileUpload"), newFileName);
+                    fileupload1.SaveAs(path);
+                    objVenderViewModel.DocDetail = fileName;
+                    objVenderViewModel.DocURL = newFileName;
+                    UserDetails objUserDetails = new UserDetails();
+                   if(objUserDetails.UpdateVenderDetails(objVenderViewModel.VendorId, objVenderViewModel.Address, objVenderViewModel.Email, objVenderViewModel.DocumentId, objVenderViewModel.DocDetail, objVenderViewModel.DocURL, objVenderViewModel.ContactId))
+                    {
+                        TempData["Success"] = "Details are uploaded.";
+                    }               
+
+                }             
+                return RedirectToAction("Upload");
+            }
+            FillDocumentDropdown(objVenderViewModel.CatId, objVenderViewModel.SubCatId, objVenderViewModel.MicroCatId);
             return View(objVenderViewModel);
         }
     }

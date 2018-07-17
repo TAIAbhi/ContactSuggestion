@@ -19,7 +19,13 @@ namespace ContactSuggestion.Models
       public int ? LocationId  { get; set; }
       public string ContactNumber  { get; set; }
         [DataType(DataType.EmailAddress, ErrorMessage = "E-mail is not valid")]
-        public string Email  { get; set; }     
+      public string Email  { get; set; }     
       public int ContactId  { get; set; }
+      public int DocumentId { get; set; }
+      public int [] DocumentIds { get; set; }
+        public string DocDetail { get; set; }
+        public string DocURL { get; set; }
+        
+
     }
 }

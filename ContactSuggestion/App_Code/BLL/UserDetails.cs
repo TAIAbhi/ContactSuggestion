@@ -1449,6 +1449,58 @@ namespace BAL
             }
             return dtuserDtails;
         }
+        public DataSet GetDocumentType(int catid, int subcatid, int ? mid)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+             
+                string spName = "spGetDocumentType";
+                SqlParameter[] parameters = new SqlParameter[3];
+                parameters[0] = new SqlParameter("@CatId", catid);
+                parameters[1] = new SqlParameter("@SubCatId", subcatid);
+                parameters[2] = new SqlParameter("@MicroCatId", mid);
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
 
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
+        }       
+
+      public bool UpdateVenderDetails(int venderid, string address, string email , int docId,string DocDetail, string docUrl, int contactId)
+        {
+            bool result = false;
+            int noOfEffectedRows = 0;
+            int outParamSave = 0;
+            try
+            {
+             
+                string spName = "spUpdateVenderDetails";
+                SqlParameter[] parameters = new SqlParameter[8];
+                parameters[0] = new SqlParameter("@VendorId", venderid);
+                parameters[1] = new SqlParameter("@IsSaved", outParamSave);
+                parameters[1].Direction = ParameterDirection.Output;
+                parameters[2] = new SqlParameter("@Address", address);
+                parameters[3] = new SqlParameter("@Email", email);
+                parameters[4] = new SqlParameter("@DocumentId", docId);
+                parameters[5] = new SqlParameter("@DocDetail", DocDetail);
+                 parameters[6] = new SqlParameter("@DocURL", docUrl);
+                parameters[7] = new SqlParameter("@ContactId", contactId);
+                noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+                outParamSave = parameters[1].Value == null ? 0 : Convert.ToInt32(parameters[1].Value);
+                if (outParamSave > 0)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
     }
 }

@@ -195,6 +195,7 @@
     <Compile Include="Models\Contacts.cs" />
     <Compile Include="Models\ContactSuggestions.cs" />
     <Compile Include="Models\CustomAuthorizeAttribute.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Feedbacks.cs" />
     <Compile Include="Models\Globals.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -357,6 +358,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="FileUpload\" />
     <Folder Include="Views\Video\" />
   </ItemGroup>
   <ItemGroup>
