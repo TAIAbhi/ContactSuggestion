@@ -11,6 +11,14 @@ namespace ContactSuggestion.Models
         public string UID { get; set; }
         public string Source { get; set; }
         public string Contact { get; set; }
+        public string ProfessionalDetails { get; set; }
+        public string Area { get; set; }
+        public string Suburb { get; set; }
+
+        public string ContactArea { get; set; }
+        public string ContactSuburb { get; set; }
+        public string ContactLocation { get; set; }
+
 
         [Display(Name = "Contact Number")]
         public string ContactNumber { get; set; }
@@ -86,6 +94,9 @@ namespace ContactSuggestion.Models
         public string Maps { get; set; }
         public string DataActive { get; set; }
         public string GoogleMaps { get; set; }
-        
+
+        public IList<SentNotification> SentNotificationList { get; set; }
+        public IList<ResendNotification> ResendNotificationList { get; set; }
+
     }
 }

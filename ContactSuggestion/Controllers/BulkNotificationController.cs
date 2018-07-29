@@ -1,29 +1,20 @@
-﻿using System;
+﻿using BAL;
+using ContactSuggestion.Models;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using ContactSuggestion.Models;
-using BAL;
-using System.Data;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Net;
 using System.Web.Script.Serialization;
-using System.IO;
-
 
 namespace ContactSuggestion.Controllers
 {
-    [CustomAuthorize("2", "1")]
-    public class SuggetionListController : Controller
+    public class BulkNotificationController : Controller
     {
-        //public object ReturnData(string data)
-        //{
-        //    return string.IsNullOrEmpty(data)!=true?data:null;
-        //}
         public static T ConvertTo<T>(object value)
         {
             return ConvertTo(value, default(T));
@@ -100,66 +91,66 @@ namespace ContactSuggestion.Controllers
             return result;
         }
         // GET: SuggetionList
-        public ActionResult Index(string Category, string StartDate, string EndDate, string SubCategory, string Microcategory, string BusinessName, string CityName, string Location1, string Source, string Contact, string Platform, string IsValid, string VendorIsVerified, string IsChain, string isLocal)
-        {//string option, string search, int? pageNumber
-            int? locId = null;
-            if (!string.IsNullOrEmpty(Location1))
-            {
-                locId = Convert.ToInt32(Location1);
-            }
-            int cityId = 0;
-            if (!string.IsNullOrEmpty(CityName))
-            {
-                cityId = Convert.ToInt32(CityName);
-            }
-
-            ContactSuggestions objContactSuggestion = new ContactSuggestions();
-            // List<ContactSuggestions> objList = new List<ContactSuggestions>();
-            // objContactSuggestion.ContactSuggestionsList = objList;
-            DataTable dtLocation = new DataTable();
+        public ActionResult Index()
+        {
+            DataTable dtExistingRecord = new DataTable();
+            DataTable dtNewRecord = new DataTable();
             UserDetails objUserDetails = new UserDetails();
-            // int? cateID = !string.IsNullOrEmpty(Category)
-            if (locId != null)
-            {
-                DataTable dtAllLocation = objUserDetails.GetLocation(locId, string.Empty, string.Empty, cityId);
-                Location1 = string.IsNullOrEmpty(Convert.ToString(dtAllLocation.Rows[0]["LocationName"])) ? Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim() : Convert.ToString(dtAllLocation.Rows[0]["LocationName"]).Trim() + " - " + Convert.ToString(dtAllLocation.Rows[0]["Suburb"]).Trim();
-            }
+            ContactSuggestions objContactSuggestion = new ContactSuggestions();
 
-            dtLocation = objUserDetails.GetSuggestionList(ReturnData<int?>(Category), ReturnData<int?>(SubCategory), null, ReturnData<int?>(Contact), "", ReturnData<int?>(Source), ReturnData<string>(BusinessName), ReturnData<bool?>(isLocal), ReturnData<string>(Location1), ReturnData<int?>(Microcategory), "", ReturnData<int?>(CityName), ReturnData<DateTime?>(StartDate), ReturnData<DateTime?>(EndDate), ReturnData<bool?>(IsChain), ReturnData<bool?>(IsValid), ReturnData<bool?>(IsValid)).Tables[0];
-            IList<ContactSuggestions> items = dtLocation.AsEnumerable().Select(row =>
-             new ContactSuggestions
+            dtExistingRecord = objUserDetails.GetBulkNotificationData().Tables[0];
+            dtNewRecord = objUserDetails.GetBulkNotificationData().Tables[1];
+            IList<ResendNotification> itemsResendNotification = dtExistingRecord.AsEnumerable().Select(row =>
+             new ResendNotification
              {
-                 UID = row.Field<int>("UID").ToString(),
-                 BusinessName = row.Field<string>("BusinessName")==null?"": row.Field<string>("BusinessName"),
-                 BusinessContact = row.Field<string>("BusinessContact")==null?"": row.Field<string>("BusinessContact"),
-                 CityName = row.Field<string>("CityName")==null?"": row.Field<string>("CityName"),
-                 Location1 = row.Field<string>("LocationId1")==null?"": row.Field<string>("LocationId1"),
-                 Microcategory = row.Field<string>("Microcategory")==null?"": row.Field<string>("Microcategory"),
-                 SubCategory = row.Field<string>("SubCategoryName")==null?"": row.Field<string>("SubCategoryName"),
-                 Category = row.Field<string>("CategoryName")==null?"": row.Field<string>("CategoryName"),
-                 Source = row.Field<string>("SourceName")==null?"" : row.Field<string>("SourceName"),
-                 Contact = row.Field<string>("ContactName")==null?"": row.Field<string>("ContactName"),
-                 AddedWhen = row.Field<string>("AddedWhen")==null? "": row.Field<string>("AddedWhen"),
-                 Platform = row.Field<string>("Platform")==null?"": row.Field<string>("Platform"),
-                 Chain = row.Field<string>("IsAChain")==null?"":row.Field<string>("IsAChain"),
-                 Local = row.Field<string>("CitiLevelBusiness")==null?"": row.Field<string>("CitiLevelBusiness"),
-                 IsVerified = row.Field<string>("VendorIsVerified")==null?"":row.Field<string>("VendorIsVerified"),
-                 IsActive = row.Field<string>("IsValid")==null?"": row.Field<string>("IsValid"),
-                 Maps = row.Field<string>("ShowMaps")==null?"": row.Field<string>("ShowMaps"),
-                 DataActive = row.Field<string>("IsActive")==null?"": row.Field<string>("IsActive"),
-                 GoogleMaps = "https://www.google.com/maps/search/" + (row.Field<string>("BusinessName")==null?"": row.Field<string>("BusinessName").Trim()) + "+" + (row.Field<string>("LocationId1")!=null? (row.Field<string>("LocationId1").Split('-').Length > 1 ? row.Field<string>("LocationId1").Split('-')[1] : row.Field<string>("LocationId1")):"").Trim()
-
-
+                 UID = row.Field<int>("UID"),
+                 DeviceUID = row.Field<int>("DeviceUID"),
+                 Text = row.Field<string>("Text"),
+                 NotificationType = row.Field<string>("NotificationType"),
+                 NotificationTitle = row.Field<string>("NotificationTitle"),
+                 Location = row.Field<int?>("LocationId")==null? "": getlocationName(row.Field<int>("LocationId")),
+                 Sent = row.Field<bool>("Sent"),
+                 Target = row.Field<int?>("Target"),
+                 ScheduleTIme = row.Field<DateTime?>("ScheduleTIme"),
+                 ConfirmTime = row.Field<DateTime?>("ConfirmTime"),
+                  SubCategory = row.Field<int?>("SubCategoryId"),
+                 Microcategory = row.Field<int?>("MicrocategoryId"),
+                 TimeSent = row.Field<DateTime?>("TimeSent"),
+                 IsDone = row.Field<bool?>("IsDone"),
+                 IsDismissed = row.Field<bool?>("IsDismissed"),
+                 RequestID = row.Field<int?>("RequestID"),
+                 RedirectTo = row.Field<string>("RedirectTo"),
+                 SentNotificationBy = row.Field<int?>("SentNotificationBy")   ,
+                 ContactId =row.Field<int>("ContactId")
              }).ToList();
-            objContactSuggestion.ContactSuggestionsList = items;
-            FillCategoryDrodown();
-            FillSubCate(Category);
-            FillMicroCate(SubCategory);
-            City();
-            BindSource();
-            FillContact(Source);
-            PlatformBind();
-            FillLocation(CityName);
+
+            IList<SentNotification> itemsSentNotification = dtExistingRecord.AsEnumerable().Select(row =>
+           new SentNotification
+           {
+               ContactId = row.Field<int>("ContactId"),
+               Name = row.Field<string>("ContactName"),
+               Number = row.Field<string>("ContactNumber"),
+               SourceId= row.Field<int>("SourceId"),
+               Source =Convert.ToString(GetSourceById(row.Field<int>("SourceId")).Rows[0]["Name"]),
+               SourceNo = Convert.ToString(GetSourceById(row.Field<int>("SourceId")).Rows[0]["Mobile"]),
+               HomeLocation = row.Field<string>("LocationId1"),
+               WorkLocation = row.Field<string>("LocationId2"),
+               CollegeSchoolLocation = row.Field<string>("LocationId3"),
+               ProfeDetails = row.Field<string>("Comments"),
+               AllowedRequestSuggestion = row.Field<bool>("AllowProvideSuggestion")     
+
+              }).ToList();
+
+            objContactSuggestion.ResendNotificationList = itemsResendNotification;
+            objContactSuggestion.SentNotificationList = itemsSentNotification;
+            //FillCategoryDrodown();
+            //FillSubCate(Category);
+            //FillMicroCate(SubCategory);
+            //City();
+            //BindSource();
+            //FillContact(Source);
+            //PlatformBind();
+            //GetAreaDropdown(CityName,);
             return View(objContactSuggestion);
         }
 
@@ -233,6 +224,12 @@ namespace ContactSuggestion.Controllers
             var list = new SelectList(items, "ContactId", "ContactName");
             ViewData["Contact"] = list;
         }
+        public string getlocationName(int locId)
+        {
+            UserDetails objUserDetails = new UserDetails();
+            DataTable dtLocation = objUserDetails.GetLocation(locId, string.Empty, string.Empty, 0);
+            return string.IsNullOrEmpty(Convert.ToString(dtLocation.Rows[0]["LocationName"])) ? Convert.ToString(dtLocation.Rows[0]["Suburb"]).Trim() : Convert.ToString(dtLocation.Rows[0]["LocationName"]).Trim() + " - " + Convert.ToString(dtLocation.Rows[0]["Suburb"]).Trim();
+        }
         private void FillLocation(string id)
         {
             int cid = 0;
@@ -299,6 +296,13 @@ namespace ContactSuggestion.Controllers
                                 val = loc.MicroId
                             }).ToList();
             return Json(location);
+        }
+        public DataTable GetSourceById(int sourceId)
+        {
+            DataTable dtSoruce = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dtSoruce = objUserDetails.GetSoruce(sourceId, null);
+            return dtSoruce;
         }
 
         public void BindSource()
@@ -435,9 +439,9 @@ namespace ContactSuggestion.Controllers
         [HttpPost]
         public ActionResult Edit([Bind(Include = "UID, SourceId,  ContactId,  Category,  SubCategory,  Microcategory,  BusinessName,  CitiLevelBusiness,  BusinessContact,  Location1,  Comments, IsAChain,  Platform,  CityName,ReasonForChange")] ContactSuggestions contactSugg)
         {
-            int  locID = Convert.ToInt32(contactSugg.Location1);
+            int locID = Convert.ToInt32(contactSugg.Location1);
             int? micorID = null;
-            if(!string.IsNullOrEmpty(contactSugg.Microcategory))
+            if (!string.IsNullOrEmpty(contactSugg.Microcategory))
             {
                 micorID = Convert.ToInt32(contactSugg.Microcategory);
             }
@@ -451,12 +455,12 @@ namespace ContactSuggestion.Controllers
                 {
                     DataTable dtDeviceDetails = objUserDetails.GetSourcesTokenByContactId(contactSugg.ContactId).Tables[0];
 
-                   DataTable dtDevices = objUserDetails.GetDeviceDetails(contactSugg.ContactId);
+                    DataTable dtDevices = objUserDetails.GetDeviceDetails(contactSugg.ContactId);
 
                     //ContactSuggestions objContactSugg = GetContact(contactSugg.contactId);
-                    contactSugg.BusinessContact = objUserDetails.MobileFormat(contactSugg.BusinessContact);                   
+                    contactSugg.BusinessContact = objUserDetails.MobileFormat(contactSugg.BusinessContact);
 
-                   DataTable dtLocation = objUserDetails.GetLocation(Convert.ToInt32(contactSugg.Location1), string.Empty, string.Empty,Convert.ToInt32(contactSugg.CityName));
+                    DataTable dtLocation = objUserDetails.GetLocation(Convert.ToInt32(contactSugg.Location1), string.Empty, string.Empty, Convert.ToInt32(contactSugg.CityName));
                     contactSugg.Location1 = string.IsNullOrEmpty(Convert.ToString(dtLocation.Rows[0]["LocationName"])) ? Convert.ToString(dtLocation.Rows[0]["Suburb"]).Trim() : Convert.ToString(dtLocation.Rows[0]["LocationName"]).Trim() + " - " + Convert.ToString(dtLocation.Rows[0]["Suburb"]).Trim();
                     contactSugg.Location2 = Convert.ToString(dtLocation.Rows[0]["LocationId"]);
                     contactSugg.Location3 = Convert.ToString(dtLocation.Rows[0]["AreaShortCode"]);
@@ -466,17 +470,17 @@ namespace ContactSuggestion.Controllers
                         Int64.TryParse(contactSugg.BusinessContact, out isNumber);
                         if (contactSugg.BusinessContact.Length == 10 && isNumber > 0)
                         {
-                            if (objUserDetails.UpdateContactSuggestions(Convert.ToInt32(contactSugg.UID), contactSugg.SourceId, contactSugg.ContactId, contactSugg.Category, contactSugg.SubCategory, contactSugg.Microcategory, contactSugg.BusinessName, contactSugg.CitiLevelBusiness, contactSugg.BusinessContact, contactSugg.Location1, contactSugg.Location2, contactSugg.Location3, contactSugg.Comments, "", "", "", "", contactSugg.ContactComments, contactSugg.IsAChain, contactSugg.Platform,Convert.ToInt32(contactSugg.CityName)))
+                            if (objUserDetails.UpdateContactSuggestions(Convert.ToInt32(contactSugg.UID), contactSugg.SourceId, contactSugg.ContactId, contactSugg.Category, contactSugg.SubCategory, contactSugg.Microcategory, contactSugg.BusinessName, contactSugg.CitiLevelBusiness, contactSugg.BusinessContact, contactSugg.Location1, contactSugg.Location2, contactSugg.Location3, contactSugg.Comments, "", "", "", "", contactSugg.ContactComments, contactSugg.IsAChain, contactSugg.Platform, Convert.ToInt32(contactSugg.CityName)))
                             {
                                 for (int i = 0; i < dtDevices.Rows.Count; i++)
                                 {
-                                    objUserDetails.SaveNotificationForWebSend(0, Convert.ToInt32(contactSugg.SubCategory), micorID, contactSugg.ContactId, Convert.ToInt32(dtDevices.Rows[i]["UID"]), contactSugg.ReasonForChange, "ModYourSug", false, "Suggestion Updated", locID, "Suggestion Updated", "ViewSugg",objSource.ContactId,null);
+                                    objUserDetails.SaveNotificationForWebSend(0, Convert.ToInt32(contactSugg.SubCategory), micorID, contactSugg.ContactId, Convert.ToInt32(dtDevices.Rows[i]["UID"]), contactSugg.ReasonForChange, "ModYourSug", false, "Suggestion Updated", locID, "Suggestion Updated", "ViewSugg", objSource.ContactId,null);
                                 }
-                                    // custMessage.action = "Success";
+                                // custMessage.action = "Success";
                                 // custMessage.message = "Update Successfully!";
                                 TempData["Success"] = "Update Successfully!";
 
-                                PushAndroidNotification(Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]), Convert.ToInt32(contactSugg.Category), Convert.ToInt32(contactSugg.SubCategory), Convert.ToInt32(contactSugg.Microcategory), Convert.ToInt32(locID), contactSugg.ReasonForChange, "","", contactSugg.BusinessName, contactSugg.ContactId.ToString(), contactSugg.UID, contactSugg.ReasonForChange);
+                                PushAndroidNotification(Convert.ToString(dtDeviceDetails.Rows[0]["TokenList"]), Convert.ToInt32(contactSugg.Category), Convert.ToInt32(contactSugg.SubCategory), Convert.ToInt32(contactSugg.Microcategory), Convert.ToInt32(locID), contactSugg.ReasonForChange, "", "", contactSugg.BusinessName, contactSugg.ContactId.ToString(), contactSugg.UID, contactSugg.ReasonForChange);
                             }
                             else
                             {
@@ -535,7 +539,7 @@ namespace ContactSuggestion.Controllers
             FillCityDropdown(Convert.ToInt32(contactSugg.CityName));
             FillLocationDropdown(locID, Convert.ToInt32(contactSugg.CityName));
             return View();
-        } 
+        }
 
         private void FillCategoryDrodown(int catId)
         {
@@ -571,7 +575,7 @@ namespace ContactSuggestion.Controllers
 
             ViewData["SubCategory"] = list;
         }
-        private void FillMicroCateDropdown(int subcatId, int ? mcid)
+        private void FillMicroCateDropdown(int subcatId, int? mcid)
         {
 
             // int.TryParse(subcatId, out cid);
@@ -585,10 +589,10 @@ namespace ContactSuggestion.Controllers
                  Name = row.Field<string>("Name")
 
              }).ToList();
-            var list = new SelectList(items, "MicroId", "Name", mcid);           
+            var list = new SelectList(items, "MicroId", "Name", mcid);
             ViewData["Microcategory"] = list;
         }
-        public void FillCityDropdown(int ? cityId)
+        public void FillCityDropdown(int? cityId)
         {
             DataTable dtLocation = new DataTable();
             UserDetails objUserDetails = new UserDetails();
@@ -603,10 +607,10 @@ namespace ContactSuggestion.Controllers
             var list = new SelectList(items, "CityId", "CityName", cityId);
             ViewData["CityName"] = list;
         }
-        private void FillLocationDropdown(int locid, int  cityid)
+        private void FillLocationDropdown(int locid, int cityid)
         {
-           // int cid = 0;yy
-          //  int.TryParse(cityid, out cid);
+            // int cid = 0;yy
+            //  int.TryParse(cityid, out cid);
             DataTable dtLocation = new DataTable();
             UserDetails objUserDetails = new UserDetails();
             dtLocation = objUserDetails.GetLocation(null, string.Empty, string.Empty, cityid == 0 ? -1 : cityid);
@@ -624,7 +628,7 @@ namespace ContactSuggestion.Controllers
             var list = new SelectList(items, "LocationId", "LocationName", locid);
             ViewData["Location1"] = list;
         }
-        public void PushAndroidNotification(string token, int? CatId, int? SubCategoryId, int? MicrocategoryId, int? LocationId, string title, string text, string uIDList,string bussName, string contactId, string sugId, string body)
+        public void PushAndroidNotification(string token, int? CatId, int? SubCategoryId, int? MicrocategoryId, int? LocationId, string title, string text, string uIDList, string bussName, string contactId, string sugId, string body)
         {
             // Authorization: key = AAAAS7HcV0s:APA91bF436VQayZCb - O3blmqqovG - 8ttC78jbyPVUXmgOrvCNRU8A94CWqg20lsamKjxcU2k5iPTnn2oiGJ6_hVWprBhXLD_3NtZZwDz7 - 0utoLGprkzIm06OYR2zn43m4qGkS5V - Jep
             string[] regIDs = token.Split('|');
@@ -639,7 +643,7 @@ namespace ContactSuggestion.Controllers
             objNotifications.sound = "default";
             objNotifications.vibrate = "default";
             objNotifications.priority = "high";
-           // objNotifications.
+            // objNotifications.
             objPushnotification.notification = objNotifications;
             PushData objPushData = new PushData();
             objPushData.title = "Your suggestion updated has been updated";
@@ -690,7 +694,7 @@ namespace ContactSuggestion.Controllers
                                 if (tResponse.StatusCode == HttpStatusCode.OK)
                                 {
                                     UserDetails objUserDetailsWeb = new UserDetails();
-                                   // objUserDetailsWeb.UpdateNotificationTimeSent(uIDList);
+                                    // objUserDetailsWeb.UpdateNotificationTimeSent(uIDList);
                                 }
                             }
                         }
@@ -709,7 +713,7 @@ namespace ContactSuggestion.Controllers
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }           
+            }
             else
             {
                 objUserDetails.DeleteSuggesion(Convert.ToInt32(id), "record deleted from web");
@@ -733,6 +737,186 @@ namespace ContactSuggestion.Controllers
                 return RedirectToAction("Index");
             }
         }
-    }
+        [HttpPost]
+        public JsonResult GetArea(string id)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetArea(Convert.ToInt32(cid)).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("AreaValue"),
+                 Suburb = row.Field<string>("AreaText")
+             }).ToList();
+            var location = (from loc in items
+                            select new
+                            {
+                                label = loc.Area.Trim(),
+                                val = loc.Suburb
+                            }).ToList();
+            return Json(location);
 
+
+        }
+        [HttpPost]
+        public JsonResult GetSubUrbByArea(string id, string area)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetSubUrbByArea(Convert.ToInt32(cid), area).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("SuburbValue"),
+                 Suburb = row.Field<string>("SuburbText")
+             }).ToList();
+            var location = (from loc in items
+                            select new
+                            {
+                                label = loc.Area.Trim(),
+                                val = loc.Suburb
+                            }).ToList();
+            return Json(location);
+
+
+        }
+        [HttpPost]
+        public JsonResult GetLocationByArea(string id, string area, string suburb )
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetLocationByArea(Convert.ToInt32(cid), area, suburb).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 LocationId = row.Field<int>("LocationId"),
+                 LocationName = row.Field<string>("LocationName")
+             }).ToList();
+            var location = (from loc in items
+                            select new
+                            {
+                                label = loc.LocationName.Trim(),
+                                val = loc.LocationId
+                            }).ToList();
+            return Json(location);
+
+
+        }
+
+      
+        public void GetAreaDropdown(string id,string area)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetArea(Convert.ToInt32(cid)).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("AreaValue"),
+                 Suburb = row.Field<string>("AreaText")
+             }).ToList();
+            var list = new SelectList(items, "Area", "Suburb", area);
+            ViewData["Area"] = list;
+
+
+        }
+        public void GetAreaDropdownContact(string id, string area)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetArea(Convert.ToInt32(cid)).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("AreaValue"),
+                 Suburb = row.Field<string>("AreaText")
+             }).ToList();
+            var list = new SelectList(items, "Area", "Suburb", area);
+            ViewData["ContactArea"] = list;
+
+
+        }
+
+        public void GetSubUrbByArea(string id, string area, string suburb)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetSubUrbByArea(Convert.ToInt32(cid), area).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("SuburbValue"),
+                 Suburb = row.Field<string>("SuburbText")
+             }).ToList();
+            var list = new SelectList(items, "Area", "Suburb", suburb);
+            ViewData["Suburb"] = list;
+
+        }
+        public void GetSubUrbByAreaContact(string id, string area, string suburb)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetSubUrbByArea(Convert.ToInt32(cid), area).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 Area = row.Field<string>("SuburbValue"),
+                 Suburb = row.Field<string>("SuburbText")
+             }).ToList();
+            var list = new SelectList(items, "Area", "Suburb", suburb);
+            ViewData["ContactSuburb"] = list;
+
+        }
+
+        public void GetLocationByArea(string id, string area, string suburb, int locationid)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetLocationByArea(Convert.ToInt32(cid), area, suburb).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 LocationId = row.Field<int>("LocationId"),
+                 LocationName = row.Field<string>("LocationName")
+             }).ToList();
+            var list = new SelectList(items, "LocationId", "LocationName", locationid);
+            ViewData["Location1"] = list;
+
+
+        }
+        public void GetLocationByAreaContact(string id, string area, string suburb, int locationid)
+        {
+            int cid = 0;
+            int.TryParse(id, out cid);
+            DataTable dSubCate = new DataTable();
+            UserDetails objUserDetails = new UserDetails();
+            dSubCate = objUserDetails.GetLocationByArea(Convert.ToInt32(cid), area, suburb).Tables[0];
+            IList<Location> items = dSubCate.AsEnumerable().Select(row =>
+             new Location
+             {
+                 LocationId = row.Field<int>("LocationId"),
+                 LocationName = row.Field<string>("LocationName")
+             }).ToList();
+            var list = new SelectList(items, "LocationId", "LocationName", locationid);
+            ViewData["ContactLocation"] = list;
+
+        }
+    }
 }

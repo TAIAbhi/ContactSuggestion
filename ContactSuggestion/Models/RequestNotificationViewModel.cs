@@ -36,11 +36,14 @@ namespace ContactSuggestion.Models
         public int  ContactId { get; set; }
         public string Contact { get; set; }
         public int City { get; set; }
+        public string ModuleName { get; set; }
 
         public  string Notify { get; set; }
+        [Display(Name = "RedirectTo(Please sent cityid and contactid.)")]
         public string RedirectTo { get; set; }
         public string AddOrView { get; set; }
         public string ProvdReqdsuggData { get; set; }
+        public string RedirectToType { get; set; }
     }
 
     public class PushNotification

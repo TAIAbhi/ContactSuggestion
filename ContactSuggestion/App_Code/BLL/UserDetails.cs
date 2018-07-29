@@ -1149,7 +1149,7 @@ namespace BAL
             }
             return result;
         }
-        public bool SaveNotificationForWebSend(int ? uid, int ? subcatid, int ? microcatid, int contactid, int deviceUID , string description, string NotificationType,bool sent, string NotificationTitle,int ? location, string NotificationPhoto, string RedirectTo, int sentBy)
+        public bool SaveNotificationForWebSend(int ? uid, int ? subcatid, int ? microcatid, int contactid, int deviceUID , string description, string NotificationType,bool sent, string NotificationTitle,int ? location, string NotificationPhoto, string RedirectTo, int sentBy, int ? redirectToType)
         {
             bool result = false;
             int noOfEffectedRows = 0;
@@ -1162,7 +1162,7 @@ namespace BAL
 
 
                 string spName = "spSaveNotificationForWebSend";
-                SqlParameter[] parameters = new SqlParameter[22];
+                SqlParameter[] parameters = new SqlParameter[23];
                 parameters[0] = new SqlParameter("@UID", uid);
                 parameters[1] = new SqlParameter("DeviceUID", deviceUID);
                 parameters[3] = new SqlParameter("@SubCategoryId", subcatid);
@@ -1189,8 +1189,8 @@ namespace BAL
                 parameters[19] = new SqlParameter("@Token", DBNull.Value);
                 parameters[20] = new SqlParameter("@RedirectTo", RedirectTo);
                 parameters[21] = new SqlParameter("@SentNotificationBy", sentBy);
+                parameters[22] = new SqlParameter("@RedirectToType", redirectToType);
                 
-
                 noOfEffectedRows = SqlHelper.ExecuteNonQuery(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
                 outParamSave = parameters[2].Value == null ? 0 : Convert.ToInt32(parameters[2].Value);
                 if (outParamSave > 0)
@@ -1501,6 +1501,79 @@ namespace BAL
                 throw ex;
             }
             return result;
+        }
+        public DataSet GetArea(int city)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+
+                string spName = "spGetArea";
+                SqlParameter[] parameters = new SqlParameter[1];
+                parameters[0] = new SqlParameter("@CityId", city);              
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
+        }
+        public DataSet GetSubUrbByArea(int city, string area)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+
+                string spName = "spGetSubUrbByArea";
+                SqlParameter[] parameters = new SqlParameter[2];
+                parameters[0] = new SqlParameter("@CityId", city);
+                parameters[1] = new SqlParameter("@Area", area);                
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
+        }
+        public DataSet GetLocationByArea(int city, string area, string suburb)
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+
+                string spName = "spGetLocationByArea";
+                SqlParameter[] parameters = new SqlParameter[3];
+                parameters[0] = new SqlParameter("@CityId", city);
+                parameters[1] = new SqlParameter("@Area", area);
+                parameters[2] = new SqlParameter("@SubUrb", suburb);                
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
+        }
+        public DataSet GetBulkNotificationData()
+        {
+            DataSet dtuserDtails = new DataSet();
+            try
+            {
+
+                string spName = "spGetBulkNotificationData";             
+                dtuserDtails = SqlHelper.ExecuteDataset(SqlHelper.GetConnectionString(), CommandType.StoredProcedure, spName);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtuserDtails;
         }
     }
 }

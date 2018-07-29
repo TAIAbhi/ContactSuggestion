@@ -171,6 +171,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BulkNotificationController.cs" />
     <Compile Include="Controllers\ContactDetailsController.cs" />
     <Compile Include="Controllers\FAQController.cs" />
     <Compile Include="Controllers\FindSuggetionController.cs" />
@@ -205,6 +206,8 @@
     <Compile Include="Models\Ranks.cs" />
     <Compile Include="Models\RequestNotificationViewModel.cs" />
     <Compile Include="Models\RequestSuggetions.cs" />
+    <Compile Include="Models\ResendNotification.cs" />
+    <Compile Include="Models\SentNotification.cs" />
     <Compile Include="Models\VenderViewModel.cs" />
     <Compile Include="Models\VideoResult.cs" />
     <Compile Include="Models\Source.cs" />
@@ -355,6 +358,7 @@
     <Content Include="Views\SuggetionList\Index.cshtml" />
     <Content Include="Views\SuggetionList\Edit.cshtml" />
     <Content Include="Views\Vender\Upload.cshtml" />
+    <Content Include="Views\BulkNotification\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

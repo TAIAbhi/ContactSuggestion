@@ -137,7 +137,7 @@ namespace ContactSuggestion.Controllers
             return View(objRequestNotificationViewModel);
         }
         [HttpPost]
-        public ActionResult Create([Bind(Include = "CatId,SubCategoryId,MicrocategoryId,ContactId,Text,NotificationType,NotificationTitle,LocationId,NotificationPhoto,ProvdReqdsuggData")] RequestNotificationViewModel reqSug)
+        public ActionResult Create([Bind(Include = "CatId,SubCategoryId,MicrocategoryId,ContactId,Text,NotificationType,NotificationTitle,LocationId,NotificationPhoto,ProvdReqdsuggData,ModuleName,RedirectToType")] RequestNotificationViewModel reqSug)
         {
             if (ModelState.IsValid)
             {
@@ -181,12 +181,17 @@ namespace ContactSuggestion.Controllers
                     {
                         reqSug.RedirectTo = "ViewSugg";
                     }
-                    if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, false, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId))
+
+                  if(Convert.ToInt32(reqSug.RedirectToType)==1)
+                    {
+                        reqSug.RedirectTo = reqSug.ModuleName;
+                    }
+                    if (objUserDetails.SaveNotificationForWebSend(reqSug.UID, reqSug.SubCategoryId, reqSug.MicrocategoryId, reqSug.ContactId, Convert.ToInt32(dtDeviceDetails.Rows[i]["UID"]), reqSug.Text, reqSug.NotificationType, false, reqSug.NotificationTitle, reqSug.LocationId, reqSug.NotificationPhoto, reqSug.RedirectTo, objSource.ContactId, Convert.ToInt32(reqSug.RedirectToType)))
                     {
                         TempData["Success"] = "Added Successfully!";
-                       // deviceID = Convert.ToString(dtDeviceDetails.Rows[i]["DeviceID"]);
-                       // type = Convert.ToString(dtDeviceDetails.Rows[i]["Type"]);
-                        //token = Convert.ToString(dtDeviceDetails.Rows[i]["Token"]);
+                        // deviceID = Convert.ToString(dtDeviceDetails.Rows[i]["DeviceID"]);
+                        // type = Convert.ToString(dtDeviceDetails.Rows[i]["Type"]);
+                        // token = Convert.ToString(dtDeviceDetails.Rows[i]["Token"]);
                         if (reqSug.NotificationType == "ProvdReqdsugg")
                         {
                             dtDeviceDetails = objUserDetails.GetSourcesToken().Tables[0];
